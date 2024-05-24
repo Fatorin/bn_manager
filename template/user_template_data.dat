@@ -1,0 +1,4 @@
+"BNET\\acct\\email"=""
+"BNET\\acct\\passhash1"="{{ password }}"
+"BNET\\acct\\userid"="{{ userid }}"
+"BNET\\acct\\username"="{{ username }}"

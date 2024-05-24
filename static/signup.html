@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html class="no-js">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Fate Another 註冊用戶</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            註冊用戶
+        </a>
+    </div>
+</nav>
+<div aria-live="polite" aria-atomic="true" class="position-relative">
+    <div class="toast-container position-absolute top-0 end-0 p-3">
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">註冊通知</strong>
+                <small class="text-muted">just now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <form id="sign_form">
+        <div class="row my-4">
+            <label for="username" class="col-sm-2 col-form-label">用戶名稱:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="username" required pattern="^[\w\[\]\-\.]+$">
+                <small class="invalid-feedback" class="text-muted">特殊字元僅接受 []-_. </small>
+            </div>
+        </div>
+        <div class="row my-2">
+            <label for="validNum" class="col-sm-2 col-form-label">驗證碼:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="validNum" required pattern="^[\w]+$">
+                <small class="invalid-feedback" class="text-muted">請輸入驗證碼</small>
+            </div>
+        </div>
+        <button id="sign_btn" type="submit" class="btn btn-primary">註冊</button>
+    </form>
+</div>
+</body>
+
+</html>
+<script>
+    document.getElementById("sign_form").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        var data = {
+            username: document.getElementById("username").value,
+            valid_code: document.getElementById("validNum").value
+        };
+
+        fetch("add_user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.username) {
+                    showMessage(
+                        '<span style="color: #007500; ">ID「<span style="color: #0000ff; ">' + data.username + '</span>」, <br>' +
+                        '<span style="color: #007500; ">Password「<span style="color: #0000ff; ">' + data.password + '</span>」, <br>' +
+                        'ID created, you can change your password in channel with command /chpass NewPassword'
+                    );
+                } else {
+                    showMessage(data.error);
+                }
+            })
+            .catch(error => {
+                showMessage(error);
+            });
+    });
+
+    function showMessage(message) {
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+        var toastList = toastElList.map(function (toastEl) {
+            return new bootstrap.Toast(toastEl, {
+                animation: true,
+                autohide: true,
+                delay: 10000,
+            })
+        });
+
+        var successToast = toastList[0];
+        var toastBody = document.querySelector('.toast-body');
+        toastBody.innerHTML = message;
+        successToast.show();
+    }
+</script>

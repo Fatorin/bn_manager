@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Fate Another Room Status</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                Fate Another Room Status
+            </a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 py-4">
+                <span>Because the Osaka line will cause too serious network delays for some players, only
+                    Hong Kong rooms are reserved.</span>
+            </div>
+            <div class="col-12">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">RoomName</th>
+                            <th scope="col">PlayerCounts</th>
+                        </tr>
+                    </thead>
+                    <tbody id="roomTbody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-12">
+                <div id="errorSpan" class="alert alert-primary" role="alert"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script>
+    var errorSpan = document.getElementById('errorSpan');
+    var roomTbody = document.getElementById('roomTbody');
+
+    document.addEventListener('DOMContentLoaded', function () {
+        refreshRoomInfo();
+        setInterval(function () { refreshRoomInfo(); }, 5000);
+    });
+
+    function refreshRoomInfo() {
+        fetch("room_info", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                showSuccess(data);
+            })
+            .catch(error => {
+                showError(error);
+            });
+    }
+
+    function showError(errorMsg) {
+        errorSpan.style.display = 'block';
+        errorSpan.innerHTML = '';
+        errorSpan.appendChild(document.createTextNode(errorMsg));
+    }
+
+    function showSuccess(json) {
+        errorSpan.style.display = 'none';
+        roomTbody.innerHTML = '';
+
+        json.forEach(function (value) {
+            var row = document.createElement('tr');
+
+            var cell1 = document.createElement('th');
+            cell1.scope = 'row';
+            cell1.textContent = value["room_id"];
+
+            var cell2 = document.createElement('td');
+            cell2.textContent = value["room_name"];
+
+            var cell3 = document.createElement('td');
+            cell3.textContent = value["player_count"];
+
+            row.appendChild(cell1);
+            row.appendChild(cell2);
+            row.appendChild(cell3);
+
+            roomTbody.appendChild(row);
+        });
+    }
+</script>
