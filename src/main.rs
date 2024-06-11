@@ -159,7 +159,7 @@ fn write_user_data(username: &str, pwd: &str, state: &AppState) -> bool {
         }
     };
 
-    let mut template_data: String = match fs::read_to_string("../template/user_template_data.dat") {
+    let mut template_data: String = match fs::read_to_string("./template/user_template_data.dat") {
         Ok(data) => data,
         Err(_) => {
             println!("user not template data");
