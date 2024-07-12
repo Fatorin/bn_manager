@@ -1,6 +1,8 @@
-USER_DATA_PATH = "YOUR_USER_DATA_PATH"
-CERTS_PATH = "YOUR_CERTS_PATH"
-BN_LOG_PATH = "YOUR_BN_LOG_PATH"
-VALID_CODE = "YOUR_VALID_CODE"
-RUNTIME_MODE = "dev"
-UID_OFFSET = 0
+user_data_path = "YOUR_USER_DATA_PATH"
+certs_path = "YOUR_CERTS_PATH"
+bn_log_path = "YOUR_BN_LOG_PATH"
+valid_code = "YOUR_VALID_CODE"
+map_path = "YOUR_MAP_PATH"
+map_valid_code = "YOUR_MAP_VALID_CODE"
+runtime_mode = "dev"
+uid_offset = 0
