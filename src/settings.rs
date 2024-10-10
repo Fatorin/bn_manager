@@ -5,12 +5,10 @@ use once_cell::sync::Lazy;
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub user_data_path: String,
-    pub certs_path: String,
     pub bn_log_path: String,
     pub valid_code: String,
     pub map_path: String,
     pub map_valid_code: String,
-    pub runtime_mode: String,
     pub uid_offset: i32,
 }
 
@@ -33,10 +31,6 @@ fn validate_config(config: &Config) -> bool {
         println!("USER_DATA_PATH is empty");
         return false;
     }
-    if config.certs_path.is_empty() {
-        println!("CERTS_PATH is empty");
-        return false;
-    }
     if config.bn_log_path.is_empty() {
         println!("BN_LOG_PATH is empty");
         return false;
@@ -51,10 +45,6 @@ fn validate_config(config: &Config) -> bool {
     }
     if config.map_valid_code.is_empty() {
         println!("MAP_VALID_CODE is empty");
-        return false;
-    }
-    if config.runtime_mode.is_empty() {
-        println!("RUNTIME_MODE is empty");
         return false;
     }
     if config.uid_offset < 0 {

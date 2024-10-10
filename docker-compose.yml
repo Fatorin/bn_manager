@@ -1,0 +1,11 @@
+services:
+    bn_manager:
+        container_name: bn_manager
+        image: bn_manager:0.1.1
+        volumes:
+            - ./settings.toml:/app/settings.toml
+            - ./users:/app/users
+            - ./maps:/app/maps
+            - ./server.dat:/app/server.dat
+        ports:
+            - "3000:3000"

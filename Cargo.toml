@@ -1,16 +1,16 @@
 [package]
 name = "bn_manager"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 tokio = { version = "1.38", features = ["full"] }
-tower = { version = "0.4.13", features = ["util"] }
-tower-http = { version = "0.5.2", features = ["fs", "trace", "cors", "limit"] }
+tower = { version = "0.5.1", features = ["util"] }
+tower-http = { version = "0.6.1", features = ["fs", "trace", "cors", "limit"] }
 axum = { version = "0.7.5", features = ["multipart"] }
-axum-server = { version = "0.6.0", features = ["tls-rustls"] }
+axum-server = { version = "0.7.1" }
 axum-extra = { version = "0.9.3" }
 serde = { version = "1.0.204", features = ["derive"] }
 serde_json = "1.0.120"

@@ -1,0 +1,7 @@
+# Please replace the following settings
+user_data_path = "/app/users"
+bn_log_path = "/app/server.dat"
+valid_code = "YOUR_VALID_CODE"
+map_path = "/app/maps"
+map_valid_code = "YOUR_MAP_VALID_CODE"
+uid_offset = 0
