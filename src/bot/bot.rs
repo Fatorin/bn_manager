@@ -43,10 +43,11 @@ pub async fn start_discord_bot() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Discord Bot starting...");
 
-    client
-        .start()
-        .await
-        .map_err(|why| format!("Discord Bot start failed, error: {:?}", why))?;
+    tokio::spawn(async move {
+        if let Err(why) = client.start().await {
+            eprintln!("iscord Bot start failed, error: {:?}", why);
+        }
+    });
 
     Ok(())
 }
