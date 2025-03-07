@@ -50,7 +50,7 @@ fn validate_config(config: &Config) -> bool {
         println!("MAP_VALID_CODE is empty");
         return false;
     }
-    if !Path::new(&config.db_path).exists() {
+    if config.db_path.is_empty() {
         println!("DB_PATH is empty");
         return false;
     }
