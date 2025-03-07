@@ -59,9 +59,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 Ok(_) => info!("Discord Bot shutdown complete"),
                 Err(err) => {
                     error!("Discord Bot error: {:?}", err);
-                    // Log to file as well
-                    std::fs::write("discord_bot_error.log", format!("{:?}", err))
-                        .unwrap_or_else(|e| error!("Failed to write error log: {}", e));
                 }
             }
         },
@@ -70,9 +67,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 Ok(_) => info!("Axum Server shutdown complete"),
                 Err(err) => {
                     error!("Axum Server error: {:?}", err);
-                    // Log to file as well
-                    std::fs::write("axum_server_error.log", format!("{:?}", err))
-                        .unwrap_or_else(|e| error!("Failed to write error log: {}", e));
                 }
             }
         },
