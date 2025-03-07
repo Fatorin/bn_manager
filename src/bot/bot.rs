@@ -3,12 +3,15 @@ use serenity::all::GatewayIntents;
 use serenity::Client;
 use sqlx::migrate::Migrator;
 use std::path::Path;
+use tokio::sync::broadcast::Receiver;
 
 pub struct Bot {
     pub database: sqlx::SqlitePool,
 }
 
-pub async fn start_discord_bot() -> Result<(), Box<dyn std::error::Error>> {
+pub async fn start_discord_bot(
+    shutdown: &mut Receiver<()>,
+) -> Result<(), Box<dyn std::error::Error>> {
     let token = &CONFIG.discord_token;
 
     let intents = GatewayIntents::GUILD_MESSAGES
@@ -32,7 +35,7 @@ pub async fn start_discord_bot() -> Result<(), Box<dyn std::error::Error>> {
     migrations
         .run(&database)
         .await
-        .map_err(|e| format!("Couldn't run database migrations :{}", e))?;
+        .map_err(|e| format!("Couldn't run database migrations: {}", e))?;
 
     let bot = Bot { database };
 
@@ -43,11 +46,17 @@ pub async fn start_discord_bot() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Discord Bot starting...");
 
-    tokio::spawn(async move {
-        if let Err(why) = client.start().await {
-            eprintln!("iscord Bot start failed, error: {:?}", why);
+    tokio::select! {
+        res = client.start() => {
+            if let Err(why) = res {
+                eprintln!("Discord Bot starting failed, ex:{:?}", why);
+            }
+        },
+        _ = shutdown.recv() => {
+            println!("Shutting down Discord Bot...");
+            client.shard_manager.shutdown_all().await;
         }
-    });
+    }
 
     Ok(())
 }

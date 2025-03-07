@@ -1,13 +1,35 @@
 services:
-    bn_manager:
-        container_name: bn_manager
-        image: bn_manager:0.1.4
+    PvPGN:
+        container_name: PvPGN
+        image: fatorin/pvpgn-server:1.99.8RC1
+        restart: always
+        ports:
+            - "6112:6112"
+            - "6200:6200"
         volumes:
-            - ./settings.toml:/app/settings.toml
-            - ./users:/app/users
-            - ./maps:/app/maps
-            - ./db:/app/db
-            - ./i18n:/app/i18n
-            - ./server.dat:/app/server.dat
+            - ./etc:/usr/local/etc
+            - ./var:/usr/local/var
+        networks:
+            - bn_network
+    BNManager:
+        container_name: BNManager
+        image: fatorin/bn_manager:0.2.0
+        restart: always
         ports:
             - "3000:3000"
+        volumes:
+            - ./settings.toml:/app/settings.toml
+            - ./var/pvpgn/users:/app/users
+            - ./bots/maps:/app/maps
+            - ./var/pvpgn/status/server.dat:/app/server.dat
+            - ./static/index.html:/app/static/index.html
+            - ./db:/app/db
+            # use it if you want to add other locale file
+            # - ./i18n:/app/i18n
+        networks:
+            - bn_network
+
+networks:
+    bn_network:
+        name: bn_network
+        driver: bridge
