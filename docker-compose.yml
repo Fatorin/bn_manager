@@ -1,11 +1,12 @@
 services:
     bn_manager:
         container_name: bn_manager
-        image: bn_manager:0.1.1
+        image: bn_manager:0.1.2
         volumes:
             - ./settings.toml:/app/settings.toml
             - ./users:/app/users
             - ./maps:/app/maps
+            - ./database.sqlite:/app/database.sqlite
             - ./server.dat:/app/server.dat
         ports:
             - "3000:3000"
