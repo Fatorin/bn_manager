@@ -68,17 +68,14 @@ pub fn change_password(file_name: &str, pwd_hash: &str) -> io::Result<()> {
     let mut file = File::open(&file_path)?;
     file.read_to_string(&mut content)?;
 
-    // 檢查並替換密碼
     if pattern.is_match(&content) {
         let new_content = pattern.replace_all(&content, &format!(r#""BNET\\acct\\passhash1"="{}""#, pwd_hash));
-
-        // 寫入修改後的內容
-        let mut file = fs::File::create(&file_path)?;
+        let mut file = File::create(&file_path)?;
         file.write_all(new_content.as_bytes())?;
 
-        println!("已成功替換檔案 {} 中的密碼", file_path.display());
+        println!("change password succeed, username:{}", file_path.display());
     } else {
-        println!("檔案 {} 中未找到密碼模式", file_path.display());
+        println!("didn't found passowrd field, username:{}", file_path.display());
     }
 
     Ok(())

@@ -19,7 +19,7 @@ pub async fn start_discord_bot() {
         .max_connections(5)
         .connect_with(
             sqlx::sqlite::SqliteConnectOptions::new()
-                .filename("./app/database.sqlite")
+                .filename("./app/db/database.sqlite")
                 .create_if_missing(true),
         )
         .await
