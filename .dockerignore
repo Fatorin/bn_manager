@@ -1,0 +1,21 @@
+# Rust 構建產物
+/target/
+**/*.rs.bk
+
+# 版本控制
+.git/
+.gitignore
+
+# Docker 相關文件
+Dockerfile
+.dockerignore
+
+# IDE 和編輯器配置
+.idea/
+.vscode/
+
+# 文檔和其他非必要文件
+*.md
+
+# 環境變數文件(如果有的話)
+.env

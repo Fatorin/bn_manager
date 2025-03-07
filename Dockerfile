@@ -1,16 +1,10 @@
 # build
 FROM rust:1.83 AS builder
 
-RUN apt-get update && apt-get install -y musl-tools
 RUN rustup target add x86_64-unknown-linux-musl
+RUN apt-get update && apt-get install -y musl-tools
 
 WORKDIR /app
-
-COPY Cargo.toml Cargo.lock ./
-
-RUN mkdir src && echo "fn main() {}" > src/main.rs
-RUN cargo build --release --target x86_64-unknown-linux-musl
-RUN rm -r src
 
 COPY . .
 
@@ -20,6 +14,8 @@ RUN cargo build --release --target x86_64-unknown-linux-musl
 FROM alpine:latest
 
 WORKDIR /app
+
+RUN apk add --no-cache ca-certificates
 
 COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/bn_manager /app/bn_manager
 
