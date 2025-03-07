@@ -11,7 +11,6 @@ use tower_http::services::ServeDir;
 use tower_http::trace::{DefaultMakeSpan, TraceLayer};
 use crate::handler::map::*;
 use crate::handler::room::room_info;
-use crate::handler::user::add_user;
 use crate::model::map::MapInfo;
 use crate::settings::CONFIG;
 use crate::util;
@@ -27,7 +26,6 @@ pub fn routes() -> Router {
     let cors = CorsLayer::permissive();
 
     let routes_apis = Router::new()
-        .route("/add_user", post(add_user))
         .route("/room_info", get(room_info));
 
     let routes_maps = Router::new()
@@ -37,12 +35,10 @@ pub fn routes() -> Router {
         .layer(DefaultBodyLimit::disable())
         .layer(RequestBodyLimitLayer::new(128 * 1024 * 1024));
 
-    let router = Router::new()
+    Router::new()
         .fallback_service(ServeDir::new("static").append_index_html_on_directories(true))
         .merge(routes_apis)
         .merge(routes_maps)
         .layer(cors)
-        .layer(TraceLayer::new_for_http().make_span_with(DefaultMakeSpan::default().include_headers(true)));
-
-    return router;
+        .layer(TraceLayer::new_for_http().make_span_with(DefaultMakeSpan::default().include_headers(true)))
 }

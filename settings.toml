@@ -1,7 +1,10 @@
 # Please replace the following settings
-user_data_path = "/app/users"
-bn_log_path = "/app/server.dat"
+user_data_path = "./app/users"
+bn_log_path = "./app/server.dat"
 valid_code = "YOUR_VALID_CODE"
-map_path = "/app/maps"
+map_path = "./app/maps"
 map_valid_code = "YOUR_MAP_VALID_CODE"
+discord_token = "YOUR_DISCORD_BOT_TOKEN"
+discord_server_id = 0
+discord_report_channel_id = 0
 uid_offset = 0

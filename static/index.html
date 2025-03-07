@@ -4,65 +4,284 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Fate Another Room Status</title>
+    <title id="title">Fate Another Room Status</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+    <style>
+        .navbar {
+            padding: 0.25rem 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-tabs {
+            border-bottom: none;
+        }
+
+        .nav-tabs .nav-link {
+            padding: 0.3rem 0.75rem;
+            font-size: 0.85rem;
+            border-bottom: 0;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #fff;
+            border-bottom: 1px solid #fff;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            border-top: 1px solid #dee2e6;
+            border-left: 1px solid #dee2e6;
+            border-right: 1px solid #dee2e6;
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 0 0 0.25rem 0.25rem;
+            padding: 0.5rem;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
+        }
+
+        .card-header {
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .game-rules {
+            background-color: #ffffff;
+            border-radius: 0 0 4px 4px;
+            padding: 15px;
+        }
+
+        .rules-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .rule-section {
+            flex: 0 0 calc(50% - 5px);
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .rule-section:last-child {
+            flex: 0 0 100%;
+            margin-top: 0;
+        }
+
+        .rule-title {
+            font-weight: bold;
+            color: #dc3545;
+            margin-bottom: 5px;
+            border-left: 3px solid #dc3545;
+            padding-left: 8px;
+        }
+
+        .rule-content {
+            margin-left: 12px;
+            line-height: 1.3;
+        }
+
+        .exception-title {
+            font-weight: bold;
+            color: #198754;
+            margin-bottom: 5px;
+            margin-top: 10px;
+            border-left: 3px solid #198754;
+            padding-left: 8px;
+        }
+
+        .note-title {
+            font-weight: bold;
+            color: #0d6efd;
+            margin-bottom: 5px;
+            margin-top: 10px;
+            border-left: 3px solid #0d6efd;
+            padding-left: 8px;
+        }
+
+        .punishment-item {
+            margin-left: 20px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        .punishment-item:before {
+            content: "•";
+            margin-right: 6px;
+            color: #6c757d;
+        }
+
+        .warning-title {
+            font-weight: bold;
+            color: #ffc107;
+            margin-bottom: 5px;
+            border-left: 3px solid #ffc107;
+            padding-left: 8px;
+        }
+
+        .other-rule-item {
+            margin-left: 20px;
+            position: relative;
+            margin-bottom: 4px;
+            padding-left: 20px;
+        }
+
+        .other-rule-item:before {
+            content: "🔹";
+            position: absolute;
+            left: 0;
+        }
+    </style>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                Fate Another Room Status
-            </a>
+            <a class="navbar-brand fs-6" href="#" id="title">Fate Another Room Status</a>
+            <div class="language-select">
+                <i class="fas fa-globe"></i>
+                <select id="languageSelect">
+                    <option value="en">English</option>
+                    <option value="zh-TW">繁體中文</option>
+                    <option value="zh-CN">简体中文</option>
+                    <option value="ko">한국어</option>
+                </select>
+            </div>
         </div>
     </nav>
+
     <div class="container">
-        <div class="row">
-            <div class="col-12 pt-4">
-                <h6>The bot's server location is in Osaka.</h6>
-                <h6>The bot will run at the following times, time zone is UTC+8.</h6>
+        <p class="small mb-2" id="description">
+            The bot's server is located in Hong Kong and will run at the following times, with the time zone set to
+            UTC+8.
+        </p>
+
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="rooms-tab" data-bs-toggle="tab" data-bs-target="#rooms"
+                    type="button" role="tab" aria-controls="rooms" aria-selected="true">Rooms</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="times-tab" data-bs-toggle="tab" data-bs-target="#times" type="button"
+                    role="tab" aria-controls="times" aria-selected="false">Schedule</button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="rooms" role="tabpanel" aria-labelledby="rooms-tab">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col" width="10%">#</th>
+                                <th id="room_name" scope="col" width="65%">Room Name</th>
+                                <th id="player_count" scope="col" width="25%">Player Count</th>
+                            </tr>
+                        </thead>
+                        <tbody id="roomTbody"></tbody>
+                    </table>
+                </div>
+                <div id="errorSpan" class="alert alert-primary py-1 mt-2" role="alert" style="display: none;"></div>
             </div>
-            <div class="col-12 py-4">                
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="col-2">Date</th>
-                            <th scope="col" class="col-10">Hours</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">Mon - Fri</th>
-                            <td>6pm-6am</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Sat - Sun</th>
-                            <td>1pm-6am</td>
-                        </tr>
-                    </tbody>
-                </table>
+
+            <div class="tab-pane fade" id="times" role="tabpanel" aria-labelledby="times-tab">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th id="time_th_1" scope="col" width="30%">Date</th>
+                                <th id="time_th_2" scope="col" width="70%">Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th id="time_td_1" scope="row">Mon - Thu</th>
+                                <td>19:30 - 03:30 <span class="next-day">(Next Day)</span></td>
+                            </tr>
+                            <tr>
+                                <th id="time_td_2" scope="row">Fri</th>
+                                <td>19:30 - 04:30 <span class="next-day">(Next Day)</span></td>
+                            </tr>
+                            <tr>
+                                <th id="time_td_3" scope="row">Sat - Sun</th>
+                                <td>18:30 - 04:30 <span class="next-day">(Next Day)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="col-12">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">RoomName</th>
-                            <th scope="col">PlayerCounts</th>
-                        </tr>
-                    </thead>
-                    <tbody id="roomTbody">
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-12">
-                <div id="errorSpan" class="alert alert-primary" role="alert"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header" id="rules_title">Game Rules</div>
+            <div class="card-body game-rules">
+                <div class="rules-container">
+                    <div class="rule-section">
+                        <div class="rule-title" id="leave_penalty_title">❌ Game Leaving Penalty</div>
+                        <div class="rule-content" id="leave_penalty_desc">The first player to leave before the
+                            game ends, regardless of reason, will be penalized.</div>
+                        <div class="exception-title" id="exception_title">✅ Exception:</div>
+                        <div class="rule-content" id="exception_desc">
+                            If the leading team has reached 11 points AND has at least 3 more surviving members
+                            than the losing team in that round, you may leave early without penalty (e.g., 11:4
+                            with team counts 6:3, 5:2, or 4:1).
+                        </div>
+                        <div class="note-title" id="leave_penalty_note">📌 Progressive Penalty System:</div>
+                        <div class="rule-content">
+                            <div class="punishment-item" id="leave_first">First offense: 2 hours ban</div>
+                            <div class="punishment-item" id="leave_second">Second offense: 1 day ban</div>
+                            <div class="punishment-item" id="leave_third">Third offense: 3 days ban</div>
+                            <div class="punishment-item" id="leave_fourth">Fourth offense: 1 month ban</div>
+                        </div>
+                    </div>
+
+                    <div class="rule-section">
+                        <div class="rule-title" id="misconduct_title">❌ Misconduct Penalty</div>
+                        <div class="rule-content" id="misconduct_desc">The following behaviors will be penalized
+                            after confirmation by administrators:</div>
+                        <div class="rule-content">
+                            <div class="punishment-item" id="misconduct_1">Insulting other players</div>
+                            <div class="punishment-item" id="misconduct_2">Maliciously abandoning the game (AFK,
+                                intentional suicide, etc.)</div>
+                            <div class="punishment-item" id="misconduct_3">Attacking teammates or destroying
+                                friendly buildings (Don't attack unfamiliar teammates)</div>
+                        </div>
+                        <div class="note-title" id="misconduct_penalty_note">📌 Progressive Penalty System:
+                        </div>
+                        <div class="rule-content">
+                            <div class="punishment-item" id="misconduct_first">First offense: 3 days ban</div>
+                            <div class="punishment-item" id="misconduct_second">Second offense: 1 month ban
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rule-section">
+                        <div class="warning-title" id="other_rules_title">⚠️ Other Rules</div>
+                        <div class="other-rule-item" id="other_rule_1">If no violations occur within 1 month,
+                            the penalty count will reset.</div>
+                        <div class="other-rule-item" id="other_rule_2">For special circumstances, please message
+                            the administrators.</div>
+                        <div class="other-rule-item" id="other_rule_3">Alternate accounts aren't specifically
+                            monitored, but please don't use them to maliciously violate rules.</div>
+
+                        <div class="mt-3 text-center" id="conclusion">Please follow the rules and help maintain
+                            a positive gaming environment! 🚀</div>
+                        <div class="text-center" id="report_instruction">Please report violations immediately in
+                            the Discord Report channel. Late reports will not be processed.</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -70,13 +289,230 @@
 
 </html>
 <script>
-    var errorSpan = document.getElementById('errorSpan');
-    var roomTbody = document.getElementById('roomTbody');
+    const translations = {
+        "en": {
+            "title": "Fate Another Room Status",
+            "description": "The bot's server is located in Hong Kong and will run at the following times, with the time zone set to UTC+8.",
+            "time_th_1": "Date",
+            "time_th_2": "Hours",
+            "time_td_1": "Mon - Thu",
+            "time_td_2": "Fri",
+            "time_td_3": "Sat - Sun",
+            "room_name": "Room Name",
+            "player_count": "Player Count",
+            "next_day": "(Next Day)",
+            "error": "An error occurred",
+            "rules_title": "Game Rules",
+            "leave_penalty_title": "❌ Game Leaving Penalty",
+            "leave_penalty_desc": "The first player to leave before the game ends, regardless of reason, will be penalized.",
+            "exception_title": "✅ Exception:",
+            "exception_desc": "If the leading team has reached 11 points AND has at least 3 more surviving members than the losing team in that round, you may leave early without penalty (e.g., 11:4 with team counts 6:3, 5:2, or 4:1).",
+            "leave_penalty_note": "📌 Progressive Penalty System:",
+            "leave_first": "First offense: 2 hours ban",
+            "leave_second": "Second offense: 1 day ban",
+            "leave_third": "Third offense: 3 days ban",
+            "leave_fourth": "Fourth offense: 1 month ban",
+            "misconduct_title": "❌ Misconduct Penalty",
+            "misconduct_desc": "The following behaviors will be penalized after confirmation by administrators:",
+            "misconduct_1": "Insulting other players",
+            "misconduct_2": "Maliciously abandoning the game (AFK, intentional suicide, etc.)",
+            "misconduct_3": "Attacking teammates or destroying friendly buildings (Don't attack unfamiliar teammates)",
+            "misconduct_penalty_note": "📌 Progressive Penalty System:",
+            "misconduct_first": "First offense: 3 days ban",
+            "misconduct_second": "Second offense: 1 month ban",
+            "other_rules_title": "⚠️ Other Rules",
+            "other_rule_1": "If no violations occur within 1 month, the penalty count will reset.",
+            "other_rule_2": "For special circumstances, please message the administrators.",
+            "other_rule_3": "Alternate accounts aren't specifically monitored, but please don't use them to maliciously violate rules.",
+            "conclusion": "Please follow the rules and help maintain a positive gaming environment! 🚀",
+            "report_instruction": "Please report violations immediately in the Discord Report channel. Late reports will not be processed.",
+            "rooms_tab": "Rooms",
+            "times_tab": "Schedule"
+        },
+        "zh-TW": {
+            "title": "Fate Another 房間狀態",
+            "description": "機器人的伺服器位於香港並將在以下時間運行，時區為 UTC+8。",
+            "time_th_1": "日期",
+            "time_th_2": "時間",
+            "time_td_1": "週一至週四",
+            "time_td_2": "週五",
+            "time_td_3": "週六至週日",
+            "room_name": "房間名稱",
+            "player_count": "玩家數量",
+            "next_day": "（隔日）",
+            "error": "發生錯誤",
+            "rules_title": "遊戲規則",
+            "leave_penalty_title": "❌ 遊戲中離開懲罰",
+            "leave_penalty_desc": "遊戲尚未結束前，第一個離開的玩家，無論原因，皆會受到懲罰。",
+            "exception_title": "✅ 例外情況：",
+            "exception_desc": "若優勢方已達11分，且該回合優勢方存活成員比落後方多出3名以上（例如場上人數比為6:3、5:2或4:1），則可提前離開，不會受到懲罰。",
+            "leave_penalty_note": "📌 懲罰累進制：",
+            "leave_first": "第一次：封鎖 2 小時",
+            "leave_second": "第二次：封鎖 1 天",
+            "leave_third": "第三次：封鎖 3 天",
+            "leave_fourth": "第四次：封鎖 1 個月",
+            "misconduct_title": "❌ 惡意行為懲罰",
+            "misconduct_desc": "包含以下行為，經管理員確認後將處罰：",
+            "misconduct_1": "辱罵玩家",
+            "misconduct_2": "惡意放棄遊戲（如掛網、自殺等）",
+            "misconduct_3": "攻擊隊友或拆除友軍建築（請勿攻擊不熟識的隊友）",
+            "misconduct_penalty_note": "📌 懲罰累進制：",
+            "misconduct_first": "第一次：封鎖 3 天",
+            "misconduct_second": "第二次：封鎖 1 個月",
+            "other_rules_title": "⚠️ 其他規則",
+            "other_rule_1": "違規紀錄若滿 1 個月內無再犯，將重新計算懲罰次數。",
+            "other_rule_2": "若有特殊情況，請私訊管理員處理。",
+            "other_rule_3": "不特別處理分身帳號，但請勿使用分身帳號惡意違規。",
+            "conclusion": "請大家遵守規則，共同維護良好的遊戲環境！ 🚀",
+            "report_instruction": "請在發生狀況的當下至Discord的Report專區檢舉玩家，逾期不受理。",
+            "rooms_tab": "房間列表",
+            "times_tab": "時刻表"
+        },
+        "zh-CN": {
+            "title": "Fate Another 房间状态",
+            "description": "机器人的服务器位于香港并将在以下时间运行，时区为 UTC+8。",
+            "time_th_1": "日期",
+            "time_th_2": "时间",
+            "time_td_1": "周一至周四",
+            "time_td_2": "周五",
+            "time_td_3": "周六至周日",
+            "room_name": "房间名称",
+            "player_count": "玩家数量",
+            "next_day": "（次日）",
+            "error": "发生错误",
+            "rules_title": "游戏规则",
+            "leave_penalty_title": "❌ 游戏中离开惩罚",
+            "leave_penalty_desc": "游戏尚未结束前，第一个离开的玩家，无论原因，皆会受到惩罚。",
+            "exception_title": "✅ 例外情况：",
+            "exception_desc": "若优势方已达11分，且该回合优势方存活成员比落后方多出3名以上（例如场上人数比为6:3、5:2或4:1），则可提前离开，不会受到惩罚。",
+            "leave_penalty_note": "📌 惩罚累进制：",
+            "leave_first": "第一次：封锁 2 小时",
+            "leave_second": "第二次：封锁 1 天",
+            "leave_third": "第三次：封锁 3 天",
+            "leave_fourth": "第四次：封锁 1 个月",
+            "misconduct_title": "❌ 恶意行为惩罚",
+            "misconduct_desc": "包含以下行为，经管理员确认后将处罚：",
+            "misconduct_1": "辱骂玩家",
+            "misconduct_2": "恶意放弃游戏（如挂网、自杀等）",
+            "misconduct_3": "攻击队友或拆除友军建筑（请勿攻击不熟识的队友）",
+            "misconduct_penalty_note": "📌 惩罚累进制：",
+            "misconduct_first": "第一次：封锁 3 天",
+            "misconduct_second": "第二次：封锁 1 个月",
+            "other_rules_title": "⚠️ 其他规则",
+            "other_rule_1": "违规记录若满 1 个月内无再犯，将重新计算惩罚次数。",
+            "other_rule_2": "若有特殊情况，请私信管理员处理。",
+            "other_rule_3": "不特别处理分身账号，但请勿使用分身账号恶意违规。",
+            "conclusion": "请大家遵守规则，共同维护良好的游戏环境！ 🚀",
+            "report_instruction": "请在发生状况的当下至Discord的Report专区举报玩家，逾期不受理。",
+            "rooms_tab": "房间列表",
+            "times_tab": "时间表"
+        },
+        "ko": {
+            "title": "Fate Another 방 상태",
+            "description": "봇의 서버는 홍콩에 위치하며 아래 시간에 실행됩니다. 시간대는 UTC+8입니다.",
+            "time_th_1": "날짜",
+            "time_th_2": "시간",
+            "time_td_1": "월 - 목",
+            "time_td_2": "금",
+            "time_td_3": "토 - 일",
+            "room_name": "방 이름",
+            "player_count": "플레이어 수",
+            "next_day": "(익일)",
+            "error": "오류가 발생했습니다.",
+            "rules_title": "게임 규칙",
+            "leave_penalty_title": "❌ 게임 이탈 페널티",
+            "leave_penalty_desc": "게임이 끝나기 전에 먼저 나가는 플레이어는 이유를 불문하고 처벌을 받습니다.",
+            "exception_title": "✅ 예외 상황:",
+            "exception_desc": "선두 팀이 11점에 도달했고 해당 라운드에서 선두 팀의 생존 멤버가 패배 팀보다 3명 이상 많은 경우(예: 팀 인원 비율이 6:3, 5:2, 또는 4:1), 페널티 없이 조기 퇴장이 가능합니다.",
+            "leave_penalty_note": "📌 누진적 패널티 시스템:",
+            "leave_first": "첫 번째 위반: 2시간 차단",
+            "leave_second": "두 번째 위반: 1일 차단",
+            "leave_third": "세 번째 위반: 3일 차단",
+            "leave_fourth": "네 번째 위반: 1개월 차단",
+            "misconduct_title": "❌ 부정행위 페널티",
+            "misconduct_desc": "다음 행동은 관리자 확인 후 처벌됩니다:",
+            "misconduct_1": "다른 플레이어 모욕",
+            "misconduct_2": "고의적 게임 포기(AFK, 자살 등)",
+            "misconduct_3": "팀원 공격 또는 아군 건물 파괴(낯선 팀원 공격 금지)",
+            "misconduct_penalty_note": "📌 누진적 패널티 시스템:",
+            "misconduct_first": "첫 번째 위반: 3일 차단",
+            "misconduct_second": "두 번째 위반: 1개월 차단",
+            "other_rules_title": "⚠️ 기타 규칙",
+            "other_rule_1": "1개월 동안 위반 사항이 없으면 패널티 횟수가 재설정됩니다.",
+            "other_rule_2": "특별한 상황은 관리자에게 개인 메시지를 보내주세요.",
+            "other_rule_3": "부계정은 특별히 관리하지 않지만, 규칙을 악의적으로 위반하기 위해 사용하지 마세요.",
+            "conclusion": "규칙을 준수하고 긍정적인 게임 환경을 유지하는 데 도움을 주세요! 🚀",
+            "report_instruction": "규칙 위반이 발생하면 즉시 Discord의 Report 채널에 신고해 주세요. 기한이 지난 신고는 처리되지 않습니다.",
+            "rooms_tab": "방 목록",
+            "times_tab": "시간표"
+        }
+    };
 
-    document.addEventListener('DOMContentLoaded', function () {
+    function setLanguage(lang) {
+        document.getElementById('title').textContent = translations[lang]["title"];
+        document.getElementById('description').textContent = translations[lang]["description"];
+        document.getElementById('time_th_1').textContent = translations[lang]["time_th_1"];
+        document.getElementById('time_th_2').textContent = translations[lang]["time_th_2"];
+        document.getElementById('time_td_1').textContent = translations[lang]["time_td_1"];
+        document.getElementById('time_td_2').textContent = translations[lang]["time_td_2"];
+        document.getElementById('time_td_3').textContent = translations[lang]["time_td_3"];
+        document.getElementById('room_name').textContent = translations[lang]["room_name"];
+        document.getElementById('player_count').textContent = translations[lang]["player_count"];
+        document.getElementById('rooms-tab').textContent = translations[lang]["rooms_tab"];
+        document.getElementById('times-tab').textContent = translations[lang]["times_tab"];
+
+        document.querySelectorAll(".next-day").forEach(el => {
+            el.textContent = translations[lang]["next_day"];
+        });
+
+        document.getElementById('errorSpan').textContent = translations[lang]["error"];
+        document.getElementById('languageSelect').value = lang;
+        document.getElementById('rules_title').textContent = translations[lang]["rules_title"];
+        document.getElementById('leave_penalty_title').textContent = translations[lang]["leave_penalty_title"];
+        document.getElementById('leave_penalty_desc').textContent = translations[lang]["leave_penalty_desc"];
+        document.getElementById('exception_title').textContent = translations[lang]["exception_title"];
+        document.getElementById('exception_desc').textContent = translations[lang]["exception_desc"];
+        document.getElementById('leave_penalty_note').textContent = translations[lang]["leave_penalty_note"];
+        document.getElementById('leave_first').textContent = translations[lang]["leave_first"];
+        document.getElementById('leave_second').textContent = translations[lang]["leave_second"];
+        document.getElementById('leave_third').textContent = translations[lang]["leave_third"];
+        document.getElementById('leave_fourth').textContent = translations[lang]["leave_fourth"];
+        document.getElementById('misconduct_title').textContent = translations[lang]["misconduct_title"];
+        document.getElementById('misconduct_desc').textContent = translations[lang]["misconduct_desc"];
+        document.getElementById('misconduct_1').textContent = translations[lang]["misconduct_1"];
+        document.getElementById('misconduct_2').textContent = translations[lang]["misconduct_2"];
+        document.getElementById('misconduct_3').textContent = translations[lang]["misconduct_3"];
+        document.getElementById('misconduct_penalty_note').textContent = translations[lang]["misconduct_penalty_note"];
+        document.getElementById('misconduct_first').textContent = translations[lang]["misconduct_first"];
+        document.getElementById('misconduct_second').textContent = translations[lang]["misconduct_second"];
+        document.getElementById('other_rules_title').textContent = translations[lang]["other_rules_title"];
+        document.getElementById('other_rule_1').textContent = translations[lang]["other_rule_1"];
+        document.getElementById('other_rule_2').textContent = translations[lang]["other_rule_2"];
+        document.getElementById('other_rule_3').textContent = translations[lang]["other_rule_3"];
+        document.getElementById('conclusion').textContent = translations[lang]["conclusion"];
+        document.getElementById('report_instruction').textContent = translations[lang]["report_instruction"];
+    }
+
+    document.getElementById('languageSelect').addEventListener('change', function () {
+        setLanguage(this.value);
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // 預設語言設置
+        const userLang = navigator.language || navigator.userLanguage;
+        // 檢查是否有對應的語言版本，如果沒有則使用英文
+        const lang = (userLang.startsWith('zh-TW') || userLang === 'zh-TW') ? 'zh-TW' :
+            (userLang.startsWith('zh-CN') || userLang === 'zh-CN') ? 'zh-CN' :
+                (userLang.startsWith('ko') || userLang === 'ko') ? 'ko' : 'en';
+        setLanguage(lang);
+
+        // 刷新房間資訊
         refreshRoomInfo();
         setInterval(function () { refreshRoomInfo(); }, 5000);
     });
+
+    var errorSpan = document.getElementById('errorSpan');
+    var roomTbody = document.getElementById('roomTbody');
 
     function refreshRoomInfo() {
         fetch("room_info", {

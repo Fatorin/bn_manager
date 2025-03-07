@@ -1,13 +1,6 @@
-use serde::{Deserialize, Serialize};
-
-#[derive(Deserialize, Debug)]
-pub struct AddUserReq {
+pub struct User {
+    pub id: i32,
+    pub discord_id: String,
     pub username: String,
-    pub valid_code: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct AddUserResp {
-    pub username: String,
-    pub password: String,
+    pub created_at: u64,
 }
