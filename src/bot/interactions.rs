@@ -255,7 +255,7 @@ async fn handle_report(ctx: &Context, interaction: &Interaction) -> serenity::Re
             .color(0xff0000) // 紅色
             .field("Reported Player", username, false)
             .field("Reason", reason, false)
-            //.field("Reporter", &command.user.name, false)
+            .field("Reporter", &command.user.name, false)
             .timestamp(Timestamp::now());
 
         if !comment.is_empty() {
