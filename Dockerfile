@@ -25,6 +25,7 @@ COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/bn_manager /ap
 
 COPY static /app/static
 COPY template /app/template
+COPY migrations /app/migrations
 
 CMD ["/app/bn_manager"]
 

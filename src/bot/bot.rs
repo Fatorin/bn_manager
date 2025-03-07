@@ -8,7 +8,7 @@ pub struct Bot {
     pub database: sqlx::SqlitePool,
 }
 
-pub async fn start_discord_bot() {
+pub async fn start_discord_bot() -> Result<(), Box<dyn std::error::Error>> {
     let token = &CONFIG.discord_token;
 
     let intents = GatewayIntents::GUILD_MESSAGES
@@ -19,28 +19,34 @@ pub async fn start_discord_bot() {
         .max_connections(5)
         .connect_with(
             sqlx::sqlite::SqliteConnectOptions::new()
-                .filename("./app/db/database.sqlite")
+                .filename(&CONFIG.db_path)
                 .create_if_missing(true),
         )
         .await
-        .expect("Couldn't connect to database");
+        .map_err(|e| format!("Couldn't connect to database: {}", e))?;
 
-    let migrations = Migrator::new(Path::new("./migrations")).await.unwrap();
+    let migrations = Migrator::new(Path::new("./migrations"))
+        .await
+        .map_err(|e| format!("Couldn't load migrations: {}", e))?;
+
     migrations
         .run(&database)
         .await
-        .expect("Couldn't run database migrations");
+        .map_err(|e| format!("Couldn't run database migrations :{}", e))?;
 
     let bot = Bot { database };
 
     let mut client = Client::builder(&token, intents)
         .event_handler(bot)
         .await
-        .expect("Error creating client");
+        .map_err(|e| format!("Error creating client: {}", e))?;
 
     println!("Discord Bot starting...");
 
-    if let Err(why) = client.start().await {
-        eprintln!("Discord Bot start failed, error: {:?}", why);
-    }
+    client
+        .start()
+        .await
+        .map_err(|why| format!("Discord Bot start failed, error: {:?}", why))?;
+
+    Ok(())
 }

@@ -1,9 +1,10 @@
-# Please replace the following settings
+# Please replace the following settings, and note that it is recommended to use absolute paths in LINUX to avoid exceptions.
 user_data_path = "./app/users"
 bn_log_path = "./app/server.dat"
 valid_code = "YOUR_VALID_CODE"
 map_path = "./app/maps"
 map_valid_code = "YOUR_MAP_VALID_CODE"
+db_path ="./app/db/database.sqlite"
 discord_token = "YOUR_DISCORD_BOT_TOKEN"
 discord_server_id = 0
 discord_report_channel_id = 0

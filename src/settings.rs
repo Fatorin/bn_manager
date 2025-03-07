@@ -1,6 +1,7 @@
 use once_cell::sync::Lazy;
 use serde::Deserialize;
 use std::fs;
+use std::path::Path;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
@@ -9,6 +10,7 @@ pub struct Config {
     pub valid_code: String,
     pub map_path: String,
     pub map_valid_code: String,
+    pub db_path: String,
     pub discord_token: String,
     pub discord_server_id: u64,
     pub discord_report_channel_id: u64,
@@ -28,7 +30,7 @@ pub static CONFIG: Lazy<Config> = Lazy::new(|| {
 });
 
 fn validate_config(config: &Config) -> bool {
-    if config.user_data_path.is_empty() {
+    if !Path::new(&config.user_data_path).exists() {
         println!("USER_DATA_PATH is empty");
         return false;
     }
@@ -40,12 +42,16 @@ fn validate_config(config: &Config) -> bool {
         println!("VALID_CODE is empty");
         return false;
     }
-    if config.map_path.is_empty() {
+    if !Path::new(&config.map_path).exists() {
         println!("MAP_PATH is empty");
         return false;
     }
     if config.map_valid_code.is_empty() {
         println!("MAP_VALID_CODE is empty");
+        return false;
+    }
+    if !Path::new(&config.db_path).exists() {
+        println!("DB_PATH is empty");
         return false;
     }
     if config.discord_token.is_empty() {
