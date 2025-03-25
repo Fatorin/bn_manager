@@ -22,7 +22,7 @@ fn register() -> CreateCommand {
 
 fn find_account() -> CreateCommand {
     CreateCommand::new("find_account")
-        .description("Register a new account")
+        .description("Find your account")
         .description_localized(i18n::LANG_ZH_TW, "尋找帳號")
         .description_localized(i18n::LANG_ZH_CN, "寻找帐号")
         .description_localized(i18n::LANG_KO_KR, "계정 찾기")
