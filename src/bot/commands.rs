@@ -1,12 +1,66 @@
 use crate::i18n;
 use serenity::all::*;
 
+const COMMAND_REGISTER: &'static str = "register";
+const COMMAND_FIND_ACCOUNT: &'static str = "find_account";
+const COMMAND_LINK_ACCOUNT: &'static str = "link_account";
+const COMMAND_FORGET_PASSWORD: &'static str = "forget_password";
+const COMMAND_REPORT: &'static str = "report";
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum CommandType {
+    Register,
+    FindAccount,
+    LinkAccount,
+    ForgetPassword,
+    Report,
+}
+
+impl CommandType {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            CommandType::Register => COMMAND_REGISTER,
+            CommandType::FindAccount => COMMAND_FIND_ACCOUNT,
+            CommandType::LinkAccount => COMMAND_LINK_ACCOUNT,
+            CommandType::ForgetPassword => COMMAND_FORGET_PASSWORD,
+            CommandType::Report => COMMAND_REPORT,
+        }
+    }
+}
+
+impl From<CommandType> for String {
+    fn from(cmd: CommandType) -> Self {
+        cmd.as_str().to_string()
+    }
+}
+
+impl std::str::FromStr for CommandType {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            COMMAND_REGISTER => Ok(CommandType::Register),
+            COMMAND_FIND_ACCOUNT => Ok(CommandType::FindAccount),
+            COMMAND_LINK_ACCOUNT => Ok(CommandType::LinkAccount),
+            COMMAND_FORGET_PASSWORD => Ok(CommandType::ForgetPassword),
+            COMMAND_REPORT => Ok(CommandType::Report),
+            _ => Err("unknown command".to_string()),
+        }
+    }
+}
+
 pub fn get_commands() -> Vec<CreateCommand> {
-    vec![register(), find_account(), forget_password(), report()]
+    vec![
+        register(),
+        find_account(),
+        link_account(),
+        forget_password(),
+        report(),
+    ]
 }
 
 fn register() -> CreateCommand {
-    CreateCommand::new("register")
+    CreateCommand::new(CommandType::Register)
         .description("Register Account")
         .description_localized(i18n::LANG_ZH_TW, "註冊新帳號")
         .description_localized(i18n::LANG_ZH_CN, "注册新账号")
@@ -21,15 +75,37 @@ fn register() -> CreateCommand {
 }
 
 fn find_account() -> CreateCommand {
-    CreateCommand::new("find_account")
+    CreateCommand::new(CommandType::FindAccount)
         .description("Find your account")
         .description_localized(i18n::LANG_ZH_TW, "尋找帳號")
         .description_localized(i18n::LANG_ZH_CN, "寻找帐号")
         .description_localized(i18n::LANG_KO_KR, "계정 찾기")
 }
 
+fn link_account() -> CreateCommand {
+    CreateCommand::new(CommandType::LinkAccount)
+        .description("Link your account")
+        .description_localized(i18n::LANG_ZH_TW, "連結帳號")
+        .description_localized(i18n::LANG_ZH_CN, "链接账号")
+        .description_localized(i18n::LANG_KO_KR, "계정 연결")
+        .add_option(
+            CreateCommandOption::new(CommandOptionType::String, "username", "UserName")
+                .description_localized(i18n::LANG_ZH_TW, "使用者名稱")
+                .description_localized(i18n::LANG_ZH_CN, "用戶名")
+                .description_localized(i18n::LANG_KO_KR, "사용자 이름")
+                .required(true),
+        )
+        .add_option(
+            CreateCommandOption::new(CommandOptionType::String, "password", "Password")
+                .description_localized(i18n::LANG_ZH_TW, "密码")
+                .description_localized(i18n::LANG_ZH_CN, "用戶名")
+                .description_localized(i18n::LANG_KO_KR, "비밀번호")
+                .required(true),
+        )
+}
+
 fn forget_password() -> CreateCommand {
-    CreateCommand::new("forget_password")
+    CreateCommand::new(CommandType::ForgetPassword)
         .description("Forget Password")
         .description_localized(i18n::LANG_ZH_TW, "忘記密碼")
         .description_localized(i18n::LANG_ZH_CN, "忘记密码")
@@ -37,7 +113,7 @@ fn forget_password() -> CreateCommand {
 }
 
 fn report() -> CreateCommand {
-    CreateCommand::new("report")
+    CreateCommand::new(CommandType::Report)
         .description("Report Player")
         .description_localized(i18n::LANG_ZH_TW, "檢舉玩家")
         .description_localized(i18n::LANG_ZH_CN, "举报玩家")

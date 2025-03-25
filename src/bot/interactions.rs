@@ -1,3 +1,4 @@
+use crate::bot::commands::CommandType;
 use crate::bot::query::{create_user, get_user_by_discord_id};
 use crate::bot::response_code::ResponseCode;
 use crate::i18n::I18N;
@@ -14,6 +15,7 @@ use serenity::all::{
 use serenity::Error;
 use std::fs;
 use std::path::Path;
+use std::str::FromStr;
 
 pub async fn handle_interaction(
     db: &sqlx::sqlite::SqlitePool,
@@ -21,12 +23,15 @@ pub async fn handle_interaction(
     interaction: &Interaction,
 ) -> serenity::Result<(), Error> {
     match interaction {
-        Interaction::Command(command) => match command.data.name.as_str() {
-            "register" => handle_register(db, ctx, interaction).await?,
-            "find_account" => handle_find_account(db, ctx, interaction).await?,
-            "forget_password" => handle_forget_password(db, ctx, interaction).await?,
-            "report" => handle_report(ctx, interaction).await?,
-            _ => eprintln!("unknown command"),
+        Interaction::Command(command) => match CommandType::from_str(&command.data.name) {
+            Ok(cmd) => match cmd {
+                CommandType::Register => handle_register(db, ctx, interaction).await?,
+                CommandType::FindAccount => handle_find_account(db, ctx, interaction).await?,
+                CommandType::LinkAccount => handle_link_account(db, ctx, interaction).await?,
+                CommandType::ForgetPassword => handle_forget_password(db, ctx, interaction).await?,
+                CommandType::Report => handle_report(ctx, interaction).await?,
+            },
+            Err(err) => eprintln!("unknown interaction, ex:{:?}", err),
         },
         _ => eprintln!("unknown interaction"),
     }
@@ -43,33 +48,9 @@ async fn handle_register(
         let locale = command.locale.as_str();
         let discord_id = command.user.id.to_string();
 
-        let user_result = find_user(db, &discord_id).await;
-        match user_result {
-            Ok(user) => {
-                command_send_message(
-                    ctx,
-                    command,
-                    I18N.get_with_arg(
-                        ResponseCode::AlreadyRegistered.to_i18n_key(),
-                        locale,
-                        "username",
-                        &user.username,
-                    ),
-                )
-                .await?;
-                return Ok(());
-            }
-            Err(err) => {
-                if err != ResponseCode::NotRegistered {
-                    command_send_message(
-                        ctx,
-                        command,
-                        I18N.get(ResponseCode::ServerError.to_i18n_key(), locale),
-                    )
-                    .await?;
-                    return Ok(());
-                }
-            }
+        if let Err(message) = check_exist_user(db, &discord_id, locale).await {
+            command_send_message(ctx, command, message).await?;
+            return Ok(());
         }
 
         let options = &command.data.options;
@@ -139,6 +120,73 @@ async fn handle_find_account(
                 Ok(())
             }
         };
+    }
+
+    Ok(())
+}
+
+async fn handle_link_account(
+    db: &sqlx::sqlite::SqlitePool,
+    ctx: &Context,
+    interaction: &Interaction,
+) -> serenity::Result<(), Error> {
+    if let Interaction::Command(command) = interaction {
+        let locale = command.locale.as_str();
+        let discord_id = command.user.id.to_string();
+
+        if let Err(message) = check_exist_user(db, &discord_id, locale).await {
+            command_send_message(ctx, command, message).await?;
+            return Ok(());
+        }
+
+        let options = &command.data.options;
+
+        let username = options
+            .iter()
+            .find(|opt| opt.name == "username")
+            .and_then(|opt| opt.value.as_str())
+            .unwrap_or_default();
+
+        let password = options
+            .iter()
+            .find(|opt| opt.name == "password")
+            .and_then(|opt| opt.value.as_str())
+            .unwrap_or_default();
+
+        if username.is_empty() || password.is_empty() {
+            command_send_message(
+                ctx,
+                command,
+                I18N.get(ResponseCode::InvalidInput.to_i18n_key(), locale),
+            )
+            .await?;
+            return Ok(());
+        }
+
+        let (_, is_exist) = util::file::check_exist(&CONFIG.user_data_path, username);
+        if !is_exist {
+            command_send_message(
+                ctx,
+                command,
+                I18N.get(ResponseCode::NotRegistered.to_i18n_key(), locale),
+            )
+            .await?;
+            return Ok(());
+        }
+
+        if let Err(err) = create_user(db, &discord_id, username).await {
+            println!("create db user to link failed, ex:{}", err);
+            command_send_message(
+                ctx,
+                command,
+                I18N.get(ResponseCode::ServerError.to_i18n_key(), locale),
+            )
+            .await?;
+            return Ok(());
+        }
+
+        let message = I18N.get(ResponseCode::LinkSuccess.to_i18n_key(), locale);
+        command_send_message(ctx, command, message).await?;
     }
 
     Ok(())
@@ -369,6 +417,29 @@ fn write_user_data(username: &str) -> Result<String, ResponseCode> {
             Err(ResponseCode::ServerError)
         }
     }
+}
+async fn check_exist_user(
+    db: &sqlx::sqlite::SqlitePool,
+    discord_id: &str,
+    locale: &str,
+) -> Result<(), String> {
+    match find_user(db, &discord_id).await {
+        Ok(user) => {
+            return Err(I18N.get_with_arg(
+                ResponseCode::AlreadyRegistered.to_i18n_key(),
+                locale,
+                "username",
+                &user.username,
+            ))
+        }
+        Err(err) => {
+            if err != ResponseCode::NotRegistered {
+                return Err(I18N.get(ResponseCode::ServerError.to_i18n_key(), locale));
+            }
+        }
+    }
+
+    Ok(())
 }
 
 async fn find_user(db: &sqlx::sqlite::SqlitePool, discord_id: &str) -> Result<User, ResponseCode> {
