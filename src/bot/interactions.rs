@@ -163,15 +163,16 @@ async fn handle_link_account(
             return Ok(());
         }
 
-        let (_, is_exist) = util::file::check_exist(&CONFIG.user_data_path, username);
-        if !is_exist {
-            command_send_message(
-                ctx,
-                command,
-                I18N.get(ResponseCode::NotRegistered.to_i18n_key(), locale),
-            )
-            .await?;
-            return Ok(());
+        if let Err(is_exist) = util::file::check_exist(&CONFIG.user_data_path, username) {
+            if is_exist != ResponseCode::UserIdTaken {
+                command_send_message(
+                    ctx,
+                    command,
+                    I18N.get(ResponseCode::NotRegistered.to_i18n_key(), locale),
+                )
+                .await?;
+                return Ok(());
+            }
         }
 
         if let Err(err) = create_user(db, &discord_id, username).await {
@@ -384,10 +385,11 @@ fn write_user_data(username: &str) -> Result<String, ResponseCode> {
 
     let mut uid: usize = 1 + uid_offset as usize;
 
-    let (index, is_exist) = util::file::check_exist(&CONFIG.user_data_path, username);
-    if !is_exist {
-        return Err(ResponseCode::UserIdTaken);
-    }
+    let index = match util::file::check_exist(&CONFIG.user_data_path, username) {
+        Ok(count) => count,
+        Err(err) => return Err(err),
+    };
+
     uid += index;
 
     let password = match create_random_password() {
@@ -418,6 +420,7 @@ fn write_user_data(username: &str) -> Result<String, ResponseCode> {
         }
     }
 }
+
 async fn check_exist_user(
     db: &sqlx::sqlite::SqlitePool,
     discord_id: &str,

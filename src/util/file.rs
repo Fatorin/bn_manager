@@ -1,11 +1,12 @@
+use crate::bot::ResponseCode;
 use crate::model::map::MapInfo;
+use crate::settings::CONFIG;
+use regex::Regex;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::{fs, io};
-use regex::Regex;
-use crate::settings::CONFIG;
 
 pub fn read_files_in_directory(dir: &Path) -> io::Result<HashMap<String, MapInfo>> {
     let mut maps: HashMap<String, MapInfo> = HashMap::new();
@@ -69,26 +70,32 @@ pub fn change_password(file_name: &str, pwd_hash: &str) -> io::Result<()> {
     file.read_to_string(&mut content)?;
 
     if pattern.is_match(&content) {
-        let new_content = pattern.replace_all(&content, &format!(r#""BNET\\acct\\passhash1"="{}""#, pwd_hash));
+        let new_content = pattern.replace_all(
+            &content,
+            &format!(r#""BNET\\acct\\passhash1"="{}""#, pwd_hash),
+        );
         let mut file = File::create(&file_path)?;
         file.write_all(new_content.as_bytes())?;
 
         println!("change password succeed, username:{}", file_path.display());
     } else {
-        println!("didn't found passowrd field, username:{}", file_path.display());
+        println!(
+            "didn't found passowrd field, username:{}",
+            file_path.display()
+        );
     }
 
     Ok(())
 }
 
-pub fn check_exist(folder: &str, new_file_name: &str) -> (usize, bool) {
+pub fn check_exist(folder: &str, new_file_name: &str) -> Result<usize, ResponseCode> {
     let mut file_count: usize = 0;
 
     let entries = match fs::read_dir(folder) {
         Ok(entries) => entries,
         Err(_) => {
             println!("can't load folder");
-            return (0, false);
+            return Err(ResponseCode::ServerError);
         }
     };
 
@@ -103,8 +110,8 @@ pub fn check_exist(folder: &str, new_file_name: &str) -> (usize, bool) {
 
         let metadata = match entry.metadata() {
             Ok(metadata) => metadata,
-            Err(_) => {
-                println!("can't get file metadata");
+            Err(err) => {
+                println!("can't get file metadata, error: {}", err);
                 continue;
             }
         };
@@ -113,10 +120,10 @@ pub fn check_exist(folder: &str, new_file_name: &str) -> (usize, bool) {
             file_count += 1;
             let file_name = entry.file_name();
             if file_name.to_string_lossy().to_lowercase() == new_file_name.to_lowercase() {
-                return (0, false);
+                return Err(ResponseCode::UserIdTaken);
             }
         }
     }
 
-    (file_count, true)
+    Ok(file_count)
 }
