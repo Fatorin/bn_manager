@@ -15,6 +15,9 @@ pub struct Config {
     pub discord_server_id: u64,
     pub discord_report_channel_id: u64,
     pub uid_offset: i32,
+    pub bn_server: String,
+    pub bn_username: String,
+    pub bn_password: String,
 }
 
 pub static CONFIG: Lazy<Config> = Lazy::new(|| {
@@ -68,6 +71,18 @@ fn validate_config(config: &Config) -> bool {
     }
     if config.uid_offset < 0 {
         println!("UID_OFFSET cannot be negative is empty");
+        return false;
+    }
+    if config.bn_server.is_empty() {
+        println!("BN_SERVER is empty");
+        return false;
+    }
+    if config.bn_username.is_empty() {
+        println!("BN_USERNAME is empty");
+        return false;
+    }
+    if config.bn_password.is_empty() {
+        println!("BN_PASSWORD is empty");
         return false;
     }
     true

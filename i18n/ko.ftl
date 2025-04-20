@@ -1,9 +1,11 @@
 already_registered = 이미 등록되어 있습니다. 사용자 이름은 다음과 같습니다: {$username}
 invalid_input = 잘못된 사용자 이름입니다. 사용자 이름은 비워둘 수 없으며 영문자, 숫자, 밑줄(_), 대괄호([]), 하이픈(-) 및 마침표(.)만 포함할 수 있습니다
+invalid_password_input = 유효하지 않은 비밀번호입니다. 비밀번호는 비워둘 수 없으며, 영문자와 숫자만 포함할 수 있습니다. 최소 4자에서 최대 20자까지 가능합니다.
 user_id_taken = 이 사용자 이름은 이미 등록되어 있습니다.
 server_error = 서버 오류가 발생했습니다. 관리자에게 문의하세요.
-register_success = 등록 성공! 사용자 이름: {$username}, 비밀번호: {$password}. Battle.Net 의 아무 채널에 로그인하여 /chpass 새비밀번호를 입력하면 비밀번호를 변경할 수 있습니다.
+register_success = 등록 성공! 사용자 이름: {$username}, 비밀번호: {$password}. /chpass 새 비밀번호를 입력하여 비밀번호를 변경할 수 있습니다.
 not_registered = 아직 등록되지 않았습니다. /register 를 입력하여 계정을 등록하세요.
 password_reset = 사용자 이름: {$username}, 비밀번호가 재설정되었습니다. 새 비밀번호는 다음과 같습니다: {$password}.
 report_invalid_input = 신고 정보가 완전하지 않습니다. 다시 확인해 주세요.
 report_success = 신고가 성공적으로 제출되었습니다. 관리자 처리를 기다려 주세요.
+link_success = 계정 {$username} 이(가) 성공적으로 연결되었습니다.

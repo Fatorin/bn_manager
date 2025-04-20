@@ -12,16 +12,23 @@ impl EventHandler for Bot {
 
         let guild_id = GuildId::new(CONFIG.discord_server_id);
 
-        if let Err(e) = guild_id
+        match guild_id
             .set_commands(&ctx.http, commands::get_commands())
             .await
         {
-            eprintln!("Error handling interaction: {:?}", e);
+            Ok(_) => {
+                println!("Successfully registered application commands.");
+            }
+            Err(e) => {
+                eprintln!("Error handling interaction: {:?}", e);
+            }
         }
     }
 
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
-        if let Err(e) = interactions::handle_interaction(&self.database, &ctx, &interaction).await {
+        if let Err(e) =
+            interactions::handle_interaction(&self.database, &self.telnet, &ctx, &interaction).await
+        {
             eprintln!("Error handling interaction: {:?}", e);
         }
     }

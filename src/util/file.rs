@@ -1,10 +1,8 @@
 use crate::bot::ResponseCode;
 use crate::model::map::MapInfo;
-use crate::settings::CONFIG;
-use regex::Regex;
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::{Read, Write};
+use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::{fs, io};
 
@@ -60,32 +58,6 @@ fn analysis_w3x(path: &PathBuf) -> io::Result<MapInfo> {
     let map_info = analysis_w3x_name(file_name.to_string(), &buffer)?;
 
     Ok(map_info)
-}
-
-pub fn change_password(file_name: &str, pwd_hash: &str) -> io::Result<()> {
-    let pattern = Regex::new(r#""BNET\\\\acct\\\\passhash1"="[^"]*""#).unwrap();
-    let file_path = Path::new(&CONFIG.user_data_path).join(file_name);
-    let mut content = String::new();
-    let mut file = File::open(&file_path)?;
-    file.read_to_string(&mut content)?;
-
-    if pattern.is_match(&content) {
-        let new_content = pattern.replace_all(
-            &content,
-            &format!(r#""BNET\\acct\\passhash1"="{}""#, pwd_hash),
-        );
-        let mut file = File::create(&file_path)?;
-        file.write_all(new_content.as_bytes())?;
-
-        println!("change password succeed, username:{}", file_path.display());
-    } else {
-        println!(
-            "didn't found passowrd field, username:{}",
-            file_path.display()
-        );
-    }
-
-    Ok(())
 }
 
 pub fn check_exist(folder: &str, new_file_name: &str) -> Result<usize, ResponseCode> {

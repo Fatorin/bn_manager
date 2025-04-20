@@ -1,9 +1,11 @@
 already_registered = You have already registered. Your username is: {$username}
 invalid_input = Invalid username. Username cannot be blank and can only contain English letters, numbers, underscores (_), square brackets ([]), hyphens (-), and periods (.)
+invalid_password_input = Invalid password. The password cannot be blank and may only contain letters and numbers. It must be between 4 and 20 characters long.
 user_id_taken = This username is already registered.
 server_error = Server error. Please contact an administrator.
-register_success = Registration successful! Username: {$username}, Password: {$password}. You can log into any Battle.Net channel and type /chpass new_password to change your password.
+register_success = Registration successful! Username: {$username}, Password: {$password}. You can type /chpass new_password to change your password.
 not_registered = You are not registered yet. Please enter /register to create an account.
 password_reset = Your username: {$username}, password has been reset. Your new password is: {$password}.
 report_invalid_input = Your report information is incomplete. Please check and try again.
 report_success = Your report has been submitted successfully. Please wait for administrator processing.
+link_success = Your account {$username} has been successfully linked.

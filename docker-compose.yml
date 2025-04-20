@@ -13,7 +13,7 @@ services:
             - bn_network
     BNManager:
         container_name: BNManager
-        image: fatorin/bn_manager:0.3.1
+        image: fatorin/bn_manager:0.3.2
         restart: always
         ports:
             - "3000:3000"

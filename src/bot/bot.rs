@@ -1,12 +1,16 @@
 use crate::settings::CONFIG;
+use crate::telnet;
 use serenity::all::GatewayIntents;
 use serenity::Client;
 use sqlx::migrate::Migrator;
 use std::path::Path;
+use std::time::Duration;
 use tokio::sync::broadcast::Receiver;
+use tokio::time::timeout;
 
 pub struct Bot {
     pub database: sqlx::SqlitePool,
+    pub telnet: telnet::ApiClient,
 }
 
 pub async fn start_discord_bot(
@@ -17,6 +21,19 @@ pub async fn start_discord_bot(
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;
+
+    println!(
+        "username:{}, password:{}",
+        CONFIG.bn_username, CONFIG.bn_password
+    );
+
+    let telnet_client = timeout(
+        Duration::from_secs(30),
+        telnet::ApiClient::start(&CONFIG.bn_server, &CONFIG.bn_username, &CONFIG.bn_password),
+    )
+    .await
+    .map_err(|_| "Timeout while starting telnet client")?
+    .map_err(|e| format!("Couldn't connect to BN server {:?}", e))?;
 
     let database = sqlx::sqlite::SqlitePoolOptions::new()
         .max_connections(5)
@@ -37,7 +54,10 @@ pub async fn start_discord_bot(
         .await
         .map_err(|e| format!("Couldn't run database migrations: {}", e))?;
 
-    let bot = Bot { database };
+    let bot = Bot {
+        database,
+        telnet: telnet_client,
+    };
 
     let mut client = Client::builder(&token, intents)
         .event_handler(bot)

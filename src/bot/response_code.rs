@@ -2,6 +2,7 @@
 pub enum ResponseCode {
     AlreadyRegistered,
     InvalidInput,
+    InvalidPasswordInput,
     UserIdTaken,
     ServerError,
     RegisterSuccess,
@@ -17,6 +18,7 @@ impl ResponseCode {
         match self {
             ResponseCode::AlreadyRegistered => "already_registered",
             ResponseCode::InvalidInput => "invalid_input",
+            ResponseCode::InvalidPasswordInput => "invalid_password_input",
             ResponseCode::UserIdTaken => "user_id_taken",
             ResponseCode::ServerError => "server_error",
             ResponseCode::RegisterSuccess => "register_success",

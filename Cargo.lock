@@ -187,10 +187,9 @@ dependencies = [
 
 [[package]]
 name = "bn_manager"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "axum",
- "fluent",
  "fluent-bundle",
  "once_cell",
  "pvpgn-hash-rs",
@@ -202,7 +201,6 @@ dependencies = [
  "sqlx",
  "tokio",
  "toml",
- "tower 0.5.2",
  "tower-http",
  "tracing",
  "tracing-subscriber",
@@ -456,16 +454,6 @@ checksum = "11faaf5a5236997af9848be0bef4db95824b1d534ebc64d0f0c6cf3e67bd38dc"
 dependencies = [
  "crc32fast",
  "miniz_oxide 0.8.5",
-]
-
-[[package]]
-name = "fluent"
-version = "0.16.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb74634707bebd0ce645a981148e8fb8c7bccd4c33c652aeffd28bf2f96d555a"
-dependencies = [
- "fluent-bundle",
- "unic-langid",
 ]
 
 [[package]]

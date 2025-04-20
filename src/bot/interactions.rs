@@ -4,7 +4,8 @@ use crate::bot::response_code::ResponseCode;
 use crate::i18n::I18N;
 use crate::model::user::User;
 use crate::settings::CONFIG;
-use crate::util;
+use crate::telnet::{ApiResult, Command};
+use crate::{telnet, util};
 use rand::Rng;
 use regex::Regex;
 use serenity::all::{
@@ -19,6 +20,7 @@ use std::str::FromStr;
 
 pub async fn handle_interaction(
     db: &sqlx::sqlite::SqlitePool,
+    client: &telnet::ApiClient,
     ctx: &Context,
     interaction: &Interaction,
 ) -> serenity::Result<(), Error> {
@@ -28,7 +30,9 @@ pub async fn handle_interaction(
                 CommandType::Register => handle_register(db, ctx, interaction).await?,
                 CommandType::FindAccount => handle_find_account(db, ctx, interaction).await?,
                 CommandType::LinkAccount => handle_link_account(db, ctx, interaction).await?,
-                CommandType::ForgetPassword => handle_forget_password(db, ctx, interaction).await?,
+                CommandType::ChangePassword => {
+                    handle_change_password(db, client, ctx, interaction).await?
+                }
                 CommandType::Report => handle_report(ctx, interaction).await?,
             },
             Err(err) => eprintln!("unknown interaction, ex:{:?}", err),
@@ -193,8 +197,9 @@ async fn handle_link_account(
     Ok(())
 }
 
-async fn handle_forget_password(
+async fn handle_change_password(
     db: &sqlx::sqlite::SqlitePool,
+    telnet: &telnet::ApiClient,
     ctx: &Context,
     interaction: &Interaction,
 ) -> serenity::Result<(), Error> {
@@ -202,8 +207,16 @@ async fn handle_forget_password(
         let locale = command.locale.as_str();
         let discord_id = command.user.id.to_string();
 
-        let (username, password) = match change_password(db, &discord_id).await {
-            Ok((username, password)) => (username, password),
+        let options = &command.data.options;
+
+        let password = options
+            .iter()
+            .find(|opt| opt.name == "password")
+            .and_then(|opt| opt.value.as_str())
+            .unwrap_or_default();
+
+        let username = match change_password(db, telnet, &discord_id, password).await {
+            Ok(username) => username,
             Err(err) => {
                 let message = I18N.get(err.to_i18n_key(), locale);
                 command_send_message(ctx, command, message).await?;
@@ -211,10 +224,7 @@ async fn handle_forget_password(
             }
         };
 
-        let args = vec![
-            ("username", username.as_str()),
-            ("password", password.as_str()),
-        ];
+        let args = vec![("username", username.as_str()), ("password", password)];
         let message = I18N.get_with_args(ResponseCode::PasswordReset.to_i18n_key(), locale, &args);
         command_send_message(ctx, command, message).await?;
     }
@@ -461,36 +471,32 @@ async fn find_user(db: &sqlx::sqlite::SqlitePool, discord_id: &str) -> Result<Us
 
 async fn change_password(
     db: &sqlx::sqlite::SqlitePool,
+    client: &telnet::ApiClient,
     discord_id: &str,
-) -> Result<(String, String), ResponseCode> {
+    password: &str,
+) -> Result<String, ResponseCode> {
     let user_result = find_user(db, discord_id).await;
+
     let user = match user_result {
         Ok(user) => user,
         Err(err) => return Err(err),
     };
 
-    let password = match create_random_password() {
-        Some(password) => password,
-        None => {
-            println!("create random password failed");
-            return Err(ResponseCode::ServerError);
-        }
-    };
-
-    let pwd_hash = match pvpgn_hash_rs::get_hash_string(&password) {
-        Ok(pwd) => pwd,
-        Err(err) => {
-            println!("can't create hash password. ex:{}", err);
-            return Err(ResponseCode::ServerError);
-        }
-    };
-
-    if let Err(err) = util::file::change_password(&user.username, &pwd_hash) {
-        println!("change password failed. ex:{}", err);
-        return Err(ResponseCode::ServerError);
+    if !check_password_valid(password) {
+        return Err(ResponseCode::InvalidPasswordInput);
     }
 
-    Ok((user.username, password))
+    let resp = client
+        .send_command(Command::ChangePassword(
+            user.username.to_string(),
+            password.to_string(),
+        ))
+        .await?;
+
+    match resp {
+        ApiResult::Success(_) => Ok(user.username),
+        _ => Err(ResponseCode::ServerError),
+    }
 }
 
 fn check_username_valid(user_id: &str) -> bool {
@@ -498,6 +504,15 @@ fn check_username_valid(user_id: &str) -> bool {
         return false;
     }
 
-    let regex = Regex::new(r"^[a-zA-Z0-9\[\]\-.]+$").unwrap();
+    let regex = Regex::new(r"^[a-zA-Z0-9\[\]\-_.]{4,20}$").unwrap();
     regex.is_match(user_id)
+}
+
+fn check_password_valid(password: &str) -> bool {
+    if password.is_empty() {
+        return false;
+    }
+
+    let regex = Regex::new(r"^[a-zA-Z0-9]{4,20}$").unwrap();
+    regex.is_match(password)
 }

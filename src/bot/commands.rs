@@ -4,7 +4,7 @@ use serenity::all::*;
 const COMMAND_REGISTER: &'static str = "register";
 const COMMAND_FIND_ACCOUNT: &'static str = "find_account";
 const COMMAND_LINK_ACCOUNT: &'static str = "link_account";
-const COMMAND_FORGET_PASSWORD: &'static str = "forget_password";
+const COMMAND_CHANGE_PASSWORD: &'static str = "chpass";
 const COMMAND_REPORT: &'static str = "report";
 
 #[derive(Debug, PartialEq, Eq)]
@@ -12,7 +12,7 @@ pub enum CommandType {
     Register,
     FindAccount,
     LinkAccount,
-    ForgetPassword,
+    ChangePassword,
     Report,
 }
 
@@ -22,7 +22,7 @@ impl CommandType {
             CommandType::Register => COMMAND_REGISTER,
             CommandType::FindAccount => COMMAND_FIND_ACCOUNT,
             CommandType::LinkAccount => COMMAND_LINK_ACCOUNT,
-            CommandType::ForgetPassword => COMMAND_FORGET_PASSWORD,
+            CommandType::ChangePassword => COMMAND_CHANGE_PASSWORD,
             CommandType::Report => COMMAND_REPORT,
         }
     }
@@ -42,7 +42,7 @@ impl std::str::FromStr for CommandType {
             COMMAND_REGISTER => Ok(CommandType::Register),
             COMMAND_FIND_ACCOUNT => Ok(CommandType::FindAccount),
             COMMAND_LINK_ACCOUNT => Ok(CommandType::LinkAccount),
-            COMMAND_FORGET_PASSWORD => Ok(CommandType::ForgetPassword),
+            COMMAND_CHANGE_PASSWORD => Ok(CommandType::ChangePassword),
             COMMAND_REPORT => Ok(CommandType::Report),
             _ => Err("unknown command".to_string()),
         }
@@ -54,7 +54,7 @@ pub fn get_commands() -> Vec<CreateCommand> {
         register(),
         find_account(),
         link_account(),
-        forget_password(),
+        change_password(),
         report(),
     ]
 }
@@ -97,19 +97,26 @@ fn link_account() -> CreateCommand {
         )
         .add_option(
             CreateCommandOption::new(CommandOptionType::String, "password", "Password")
-                .description_localized(i18n::LANG_ZH_TW, "密码")
-                .description_localized(i18n::LANG_ZH_CN, "用戶名")
+                .description_localized(i18n::LANG_ZH_TW, "密碼")
+                .description_localized(i18n::LANG_ZH_CN, "密码")
                 .description_localized(i18n::LANG_KO_KR, "비밀번호")
                 .required(true),
         )
 }
 
-fn forget_password() -> CreateCommand {
-    CreateCommand::new(CommandType::ForgetPassword)
-        .description("Forget Password")
-        .description_localized(i18n::LANG_ZH_TW, "忘記密碼")
-        .description_localized(i18n::LANG_ZH_CN, "忘记密码")
-        .description_localized(i18n::LANG_KO_KR, "비밀번호를 잊으셨나요")
+fn change_password() -> CreateCommand {
+    CreateCommand::new(CommandType::ChangePassword)
+        .description("Change password")
+        .description_localized(i18n::LANG_ZH_TW, "變更密碼")
+        .description_localized(i18n::LANG_ZH_CN, "变更密码")
+        .description_localized(i18n::LANG_KO_KR, "비밀번호 변경")
+        .add_option(
+            CreateCommandOption::new(CommandOptionType::String, "password", "Password")
+                .description_localized(i18n::LANG_ZH_TW, "密碼")
+                .description_localized(i18n::LANG_ZH_CN, "密码")
+                .description_localized(i18n::LANG_KO_KR, "비밀번호")
+                .required(true),
+        )
 }
 
 fn report() -> CreateCommand {

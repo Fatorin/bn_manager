@@ -8,6 +8,7 @@ mod model;
 mod routes;
 mod settings;
 mod util;
+mod telnet;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
@@ -24,7 +25,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     info!("Starting Discord bot...");
     let bot_async_task = bot::start_discord_bot(&mut bot_shutdown_rx);
-
+    
     let axum_shutdown_tx = shutdown_tx.clone();
     let app = routes::root::routes();
     info!("Starting Axum server on 0.0.0.0:3000...");
