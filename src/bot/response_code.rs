@@ -1,9 +1,9 @@
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ResponseCode {
     AlreadyRegistered,
     InvalidInput,
     InvalidPasswordInput,
-    UserIdTaken,
+    UserIdTaken(String),
     ServerError,
     RegisterSuccess,
     NotRegistered,
@@ -19,7 +19,7 @@ impl ResponseCode {
             ResponseCode::AlreadyRegistered => "already_registered",
             ResponseCode::InvalidInput => "invalid_input",
             ResponseCode::InvalidPasswordInput => "invalid_password_input",
-            ResponseCode::UserIdTaken => "user_id_taken",
+            ResponseCode::UserIdTaken(_) => "user_id_taken",
             ResponseCode::ServerError => "server_error",
             ResponseCode::RegisterSuccess => "register_success",
             ResponseCode::NotRegistered => "not_registered",

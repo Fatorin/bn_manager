@@ -167,16 +167,11 @@ async fn handle_link_account(
             return Ok(());
         }
 
-        if let Err(is_exist) = util::file::check_exist(&CONFIG.user_data_path, username) {
-            if is_exist != ResponseCode::UserIdTaken {
-                command_send_message(
-                    ctx,
-                    command,
-                    I18N.get(ResponseCode::NotRegistered.to_i18n_key(), locale),
-                )
-                .await?;
-                return Ok(());
-            }
+        if let Err(err) =
+            util::file::verify_user_credentials(&CONFIG.user_data_path, &username, &password)
+        {
+            command_send_message(ctx, command, I18N.get(err.to_i18n_key(), locale)).await?;
+            return Ok(());
         }
 
         if let Err(err) = create_user(db, &discord_id, username).await {

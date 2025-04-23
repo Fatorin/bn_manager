@@ -54,7 +54,7 @@ pub async fn upload_map(
 
         if let Err(exist_result) = file::check_exist(&CONFIG.map_path, &file_name) {
             return match exist_result {
-                ResponseCode::UserIdTaken => (
+                ResponseCode::UserIdTaken(_) => (
                     StatusCode::BAD_REQUEST,
                     Json(json!({"error": "Has same name map"})),
                 ),

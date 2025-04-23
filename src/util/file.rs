@@ -1,5 +1,6 @@
 use crate::bot::ResponseCode;
 use crate::model::map::MapInfo;
+use regex::Regex;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Read;
@@ -60,6 +61,54 @@ fn analysis_w3x(path: &PathBuf) -> io::Result<MapInfo> {
     Ok(map_info)
 }
 
+pub fn verify_user_credentials(
+    folder: &str,
+    username: &str,
+    password: &str,
+) -> Result<(), ResponseCode> {
+    let file_name = match check_exist(folder, username) {
+        Ok(_) => {
+            return Err(ResponseCode::NotRegistered);
+        }
+        Err(err) => match err {
+            ResponseCode::UserIdTaken(username) => username,
+            _ => {
+                return Err(ResponseCode::ServerError);
+            }
+        },
+    };
+
+    let file_path = Path::new(folder).join(file_name);
+    let content = match fs::read_to_string(&file_path) {
+        Ok(content) => content,
+        Err(err) => {
+            println!("讀取檔案失敗: {}", err);
+            return Err(ResponseCode::ServerError);
+        }
+    };
+
+    let pattern = Regex::new(r#""BNET\\\\acct\\\\passhash1"="([^"]*)""#).unwrap();
+    let captures = match pattern.captures(&content) {
+        Some(captures) => captures,
+        None => {
+            println!("檔案中未找到密碼格式");
+            return Err(ResponseCode::ServerError);
+        }
+    };
+
+    let stored_password = captures.get(1).map_or("", |m| m.as_str());
+    if stored_password.is_empty() {
+        println!("檔案出現空密碼");
+        return Err(ResponseCode::ServerError);
+    };
+
+    if stored_password == password {
+        Ok(())
+    } else {
+        Err(ResponseCode::InvalidPasswordInput)
+    }
+}
+
 pub fn check_exist(folder: &str, new_file_name: &str) -> Result<usize, ResponseCode> {
     let mut file_count: usize = 0;
 
@@ -92,7 +141,9 @@ pub fn check_exist(folder: &str, new_file_name: &str) -> Result<usize, ResponseC
             file_count += 1;
             let file_name = entry.file_name();
             if file_name.to_string_lossy().to_lowercase() == new_file_name.to_lowercase() {
-                return Err(ResponseCode::UserIdTaken);
+                return Err(ResponseCode::UserIdTaken(
+                    file_name.to_string_lossy().to_string(),
+                ));
             }
         }
     }
