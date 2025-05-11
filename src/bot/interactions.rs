@@ -499,7 +499,7 @@ fn check_username_valid(user_id: &str) -> bool {
         return false;
     }
 
-    let regex = Regex::new(r"^[a-zA-Z0-9\[\]\-_.]{4,20}$").unwrap();
+    let regex = Regex::new(r"^[a-zA-Z0-9\[\]\-_.]{3,20}$").unwrap();
     regex.is_match(user_id)
 }
 

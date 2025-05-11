@@ -1,5 +1,5 @@
 already_registered = You have already registered. Your username is: {$username}
-invalid_input = Invalid username. Username cannot be blank and can only contain English letters, numbers, underscores (_), square brackets ([]), hyphens (-), and periods (.)
+invalid_input = Invalid username. Username cannot be blank and can only contain English letters, numbers, underscores (_), square brackets ([]), hyphens (-), and periods (.). It must be between 3 and 20 characters long.
 invalid_password_input = Invalid password. The password cannot be blank and may only contain letters and numbers. It must be between 4 and 20 characters long.
 user_id_taken = This username is already registered.
 server_error = Server error. Please contact an administrator.
