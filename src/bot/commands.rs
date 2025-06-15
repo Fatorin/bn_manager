@@ -11,7 +11,6 @@ const COMMAND_REPORT: &'static str = "report";
 pub enum CommandType {
     Register,
     FindAccount,
-    LinkAccount,
     ChangePassword,
     Report,
 }
@@ -21,7 +20,6 @@ impl CommandType {
         match self {
             CommandType::Register => COMMAND_REGISTER,
             CommandType::FindAccount => COMMAND_FIND_ACCOUNT,
-            CommandType::LinkAccount => COMMAND_LINK_ACCOUNT,
             CommandType::ChangePassword => COMMAND_CHANGE_PASSWORD,
             CommandType::Report => COMMAND_REPORT,
         }
@@ -41,7 +39,6 @@ impl std::str::FromStr for CommandType {
         match s {
             COMMAND_REGISTER => Ok(CommandType::Register),
             COMMAND_FIND_ACCOUNT => Ok(CommandType::FindAccount),
-            COMMAND_LINK_ACCOUNT => Ok(CommandType::LinkAccount),
             COMMAND_CHANGE_PASSWORD => Ok(CommandType::ChangePassword),
             COMMAND_REPORT => Ok(CommandType::Report),
             _ => Err("unknown command".to_string()),
@@ -53,7 +50,6 @@ pub fn get_commands() -> Vec<CreateCommand> {
     vec![
         register(),
         find_account(),
-        link_account(),
         change_password(),
         report(),
     ]
@@ -80,28 +76,6 @@ fn find_account() -> CreateCommand {
         .description_localized(i18n::LANG_ZH_TW, "尋找帳號")
         .description_localized(i18n::LANG_ZH_CN, "寻找帐号")
         .description_localized(i18n::LANG_KO_KR, "계정 찾기")
-}
-
-fn link_account() -> CreateCommand {
-    CreateCommand::new(CommandType::LinkAccount)
-        .description("Link your account")
-        .description_localized(i18n::LANG_ZH_TW, "連結帳號")
-        .description_localized(i18n::LANG_ZH_CN, "链接账号")
-        .description_localized(i18n::LANG_KO_KR, "계정 연결")
-        .add_option(
-            CreateCommandOption::new(CommandOptionType::String, "username", "UserName")
-                .description_localized(i18n::LANG_ZH_TW, "使用者名稱")
-                .description_localized(i18n::LANG_ZH_CN, "用戶名")
-                .description_localized(i18n::LANG_KO_KR, "사용자 이름")
-                .required(true),
-        )
-        .add_option(
-            CreateCommandOption::new(CommandOptionType::String, "password", "Password")
-                .description_localized(i18n::LANG_ZH_TW, "密碼")
-                .description_localized(i18n::LANG_ZH_CN, "密码")
-                .description_localized(i18n::LANG_KO_KR, "비밀번호")
-                .required(true),
-        )
 }
 
 fn change_password() -> CreateCommand {

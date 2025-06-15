@@ -8,4 +8,3 @@ not_registered = 您尚未注册，请输入/register来注册账号。
 password_reset = 您的用户名：{$username}，已完成重置密码。您的新密码为：{$password}。
 report_invalid_input = 您的举报信息未填写完整，请重新确认一次。
 report_success = 您的举报已成功提交，请等待管理员处理。
-link_success = 您的账号 {$username} 已经连接成功。

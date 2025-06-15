@@ -29,7 +29,6 @@ pub async fn handle_interaction(
             Ok(cmd) => match cmd {
                 CommandType::Register => handle_register(db, ctx, interaction).await?,
                 CommandType::FindAccount => handle_find_account(db, ctx, interaction).await?,
-                CommandType::LinkAccount => handle_link_account(db, ctx, interaction).await?,
                 CommandType::ChangePassword => {
                     handle_change_password(db, client, ctx, interaction).await?
                 }
@@ -124,69 +123,6 @@ async fn handle_find_account(
                 Ok(())
             }
         };
-    }
-
-    Ok(())
-}
-
-async fn handle_link_account(
-    db: &sqlx::sqlite::SqlitePool,
-    ctx: &Context,
-    interaction: &Interaction,
-) -> serenity::Result<(), Error> {
-    if let Interaction::Command(command) = interaction {
-        let locale = command.locale.as_str();
-        let discord_id = command.user.id.to_string();
-
-        if let Err(message) = check_exist_user(db, &discord_id, locale).await {
-            command_send_message(ctx, command, message).await?;
-            return Ok(());
-        }
-
-        let options = &command.data.options;
-
-        let username = options
-            .iter()
-            .find(|opt| opt.name == "username")
-            .and_then(|opt| opt.value.as_str())
-            .unwrap_or_default();
-
-        let password = options
-            .iter()
-            .find(|opt| opt.name == "password")
-            .and_then(|opt| opt.value.as_str())
-            .unwrap_or_default();
-
-        if username.is_empty() || password.is_empty() {
-            command_send_message(
-                ctx,
-                command,
-                I18N.get(ResponseCode::InvalidInput.to_i18n_key(), locale),
-            )
-            .await?;
-            return Ok(());
-        }
-
-        if let Err(err) =
-            util::file::verify_user_credentials(&CONFIG.user_data_path, &username, &password)
-        {
-            command_send_message(ctx, command, I18N.get(err.to_i18n_key(), locale)).await?;
-            return Ok(());
-        }
-
-        if let Err(err) = create_user(db, &discord_id, username).await {
-            println!("create db user to link failed, ex:{}", err);
-            command_send_message(
-                ctx,
-                command,
-                I18N.get(ResponseCode::ServerError.to_i18n_key(), locale),
-            )
-            .await?;
-            return Ok(());
-        }
-
-        let message = I18N.get(ResponseCode::LinkSuccess.to_i18n_key(), locale);
-        command_send_message(ctx, command, message).await?;
     }
 
     Ok(())

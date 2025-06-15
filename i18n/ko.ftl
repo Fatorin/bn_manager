@@ -8,4 +8,3 @@ not_registered = 아직 등록되지 않았습니다. /register 를 입력하여
 password_reset = 사용자 이름: {$username}, 비밀번호가 재설정되었습니다. 새 비밀번호는 다음과 같습니다: {$password}.
 report_invalid_input = 신고 정보가 완전하지 않습니다. 다시 확인해 주세요.
 report_success = 신고가 성공적으로 제출되었습니다. 관리자 처리를 기다려 주세요.
-link_success = 계정 {$username} 이(가) 성공적으로 연결되었습니다.

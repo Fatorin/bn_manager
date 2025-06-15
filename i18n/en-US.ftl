@@ -8,4 +8,3 @@ not_registered = You are not registered yet. Please enter /register to create an
 password_reset = Your username: {$username}, password has been reset. Your new password is: {$password}.
 report_invalid_input = Your report information is incomplete. Please check and try again.
 report_success = Your report has been submitted successfully. Please wait for administrator processing.
-link_success = Your account {$username} has been successfully linked.

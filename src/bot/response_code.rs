@@ -10,7 +10,6 @@ pub enum ResponseCode {
     PasswordReset,
     ReportInvalidInput,
     ReportSuccess,
-    LinkSuccess,
 }
 
 impl ResponseCode {
@@ -26,7 +25,6 @@ impl ResponseCode {
             ResponseCode::PasswordReset => "password_reset",
             ResponseCode::ReportInvalidInput => "report_invalid_input",
             ResponseCode::ReportSuccess => "report_success",
-            ResponseCode::LinkSuccess => "link_success",
         }
     }
 }
