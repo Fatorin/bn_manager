@@ -6,7 +6,7 @@ use crate::model::user::User;
 use crate::settings::CONFIG;
 use crate::telnet::{ApiResult, Command};
 use crate::{telnet, util};
-use rand::Rng;
+use rand::RngExt;
 use regex::Regex;
 use serenity::all::{
     ChannelId, CommandDataOptionValue, CommandInteraction, Context, CreateEmbed,
@@ -425,7 +425,7 @@ async fn change_password(
         .await?;
 
     match resp {
-        ApiResult::Success(_) => Ok(user.username),
+        ApiResult::Success => Ok(user.username),
         _ => Err(ResponseCode::ServerError),
     }
 }
