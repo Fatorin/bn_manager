@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match History</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .table_custom {
+            --bs-table-bg: transparent !important;
+        }
+
+        .servant-thumbnail {
+            width: 64px;
+            height: 64px;
+            vertical-align: middle;
+            object-fit: cover;
+        }
+
+        #back-to-top {
+            bottom: 32px;
+            right: 32px;
+            display: none;
+            z-index: 999;
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" href="#">Fate Another</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/score_board.html">Score Board</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">Match History</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">Room Status</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mt-4">
+        <div id="match-history-container">
+        </div>
+
+        <div class="d-flex justify-content-center mt-4">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#" id="prev-page">Previous</a></li>
+                    <li class="page-item disabled"><a class="page-link" href="#">Page <span id="current-page">1</span>
+                            of <span id="total-pages">1</span></a></li>
+                    <li class="page-item"><a class="page-link" href="#" id="next-page">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </main>
+
+    <button id="back-to-top" class="btn btn-outline-dark position-fixed">
+        ↑ Top
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+<script>
+    const matchContainer = document.querySelector('#match-history-container');
+    const currentPageSpan = document.querySelector('#current-page');
+    const totalPagesSpan = document.querySelector('#total-pages');
+    const prevLink = document.querySelector('#prev-page');
+    const nextLink = document.querySelector('#next-page');
+    const backToTopBtn = document.querySelector('#back-to-top');
+
+    const limit = 10;
+    let offset = 0;
+    let totalItems = 0;
+
+    window.addEventListener("scroll", () => {
+        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+
+        if (scrollTop > windowHeight / 2) {
+            backToTopBtn.style.display = "block";
+        } else {
+            backToTopBtn.style.display = "none";
+        }
+    });
+
+    backToTopBtn.addEventListener("click", scrollToTop);
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function fetchMatches() {
+        fetch(`/api/match_histories?limit=${limit}&offset=${offset}`)
+            .then(response => response.json())
+            .then(data => {
+                totalItems = data.total;
+                updateMatches(data);
+                updatePagination(data);
+                scrollToTop();
+            })
+            .catch(error => console.error('Error fetching match history:', error));
+    }
+
+    function updateMatches(data) {
+        matchContainer.innerHTML = '';
+        data.data.forEach(match => {
+            const teamA = match.teams ? match.teams.find(team => team.index === 1) : null;
+            const teamB = match.teams ? match.teams.find(team => team.index === 2) : null;
+
+            const teamAName = teamA ? teamA.name : 'N/A';
+            const teamAScore = teamA ? teamA.score : 'N/A';
+            const teamBName = teamB ? teamB.name : 'N/A';
+            const teamBScore = teamB ? teamB.score : 'N/A';
+
+            const mapName = match.map.split('\\').pop();
+
+            const teamADetails = teamA ? createTeamTable(teamA.servants, teamAName, teamAScore) : '<p>No servants</p>';
+            const teamBDetails = teamB ? createTeamTable(teamB.servants, teamBName, teamBScore) : '<p>No servants</p>';
+
+            const card = document.createElement('div');
+            card.className = 'card mb-3';
+
+            card.innerHTML = `
+                <div class="card-header">
+                <table class="table table_custom table-borderless mb-0">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Match ID</th>
+                            <td>${match.id}</td>
+                            <th scope="row">Map</th>
+                            <td>${mapName}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">DateTime</th>
+                            <td>${formatDateTime(match.datetime)}</td>
+                            <th scope="row">Duration</th>
+                            <td>${formatDuration(match.duration)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            ${teamADetails}
+                        </div>
+                        <div class="col-md-6">
+                            ${teamBDetails}
+                        </div>
+                    </div>
+                </div>
+                `;
+            matchContainer.appendChild(card);
+        });
+    }
+
+    function createTeamTable(servants, teamName, score) {
+        if (!servants || servants.length === 0) return `<p>No servants for ${teamName} (Score: ${score})</p>`;
+
+        let table = `
+            <table class="table table-sm table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th colspan="5" class="text-center bg-light">${teamName} (Score: ${score})</th>
+                </tr>
+                <tr>
+                    <th class="col-4">User</th>
+                    <th class="col-2">Servant</th>
+                    <th class="col-2">Level</th>
+                    <th class="col-2">KDA</th>
+                    <th class="col-2">Avg</th>
+                </tr>
+            </thead>
+            <tbody>
+        `;
+
+        servants.forEach(servant => {
+            const avg = servant.Deaths === 0 ? (servant.Kills + servant.Assists) : ((servant.Kills + servant.Assists) / servant.Deaths);
+            const formattedAvg = avg.toFixed(1);
+
+            table += `
+            <tr>
+                <td>${servant.UserName}</td>
+                <td class="text-center">
+                    <img src="${getServantImgUrl(servant.Name)}" alt="${servant.Name}" onerror="fallbackImg(this)" class="servant-thumbnail img-fluid" />
+                </td>
+                <td>${servant.Level}</td>
+                <td class="font-monospace">${servant.Kills}/${servant.Deaths}/${servant.Assists}</td>
+                <td>${formattedAvg}</td>
+            </tr>
+            `;
+        });
+
+        table += '</tbody></table>';
+        return table;
+    }
+
+    function updatePagination(data) {
+        const totalPages = Math.ceil(totalItems / limit);
+        const currentPage = Math.floor(offset / limit) + 1;
+        currentPageSpan.textContent = currentPage;
+        totalPagesSpan.textContent = totalPages;
+
+        prevLink.parentElement.classList.toggle('disabled', offset === 0);
+        nextLink.parentElement.classList.toggle('disabled', offset + limit >= totalItems);
+    }
+
+    /**
+     * 將輸入的時間字串視為東八區（+08:00）時間，
+     * 調整成對應的UTC時間，
+     * 並以本地格式字串輸出。
+     *
+     * 參數 time 範例： '2025-05-25T03:52:20Z'（實際是 +08:00 時區時間但被錯誤標示為 UTC）
+     * 返回值：本地格式時間字串
+     */
+    function formatDateTime(time) {
+        const date = new Date(time);
+        const dateUTC = new Date(date.getTime() - 8 * 60 * 60 * 1000);
+        return dateUTC.toLocaleString();
+    }
+
+    function formatDuration(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}m ${remainingSeconds}s`;
+    }
+
+    fetchMatches();
+
+    prevLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (offset > 0) {
+            offset -= limit;
+            fetchMatches();
+        }
+    });
+
+    nextLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (offset + limit < totalItems) {
+            offset += limit;
+            fetchMatches();
+        }
+    });
+</script>
+<script>
+    const servantImageUrls = {
+        "Gilles de Rais": "Gilles.jpg",
+        "Cu Chulainn": "CuChulainn.jpg",
+        "SasakiKojirou": "Sasaki.jpg",
+        "Artoria Alter": "ArtoriaAlter.jpg",
+        "Artoria.Alter": "ArtoriaAlter.jpg",
+        "Jack the Ripper": "Jack.jpg",
+        "Li Shuwen": "Lee.jpg",
+        "Lubu": "LuBu.jpg",
+        "Vlad III": "Vlad.jpg",
+        "Nursery Rhymes": "Nursery.jpg",
+        "Avenger (F/HA)": "Angra.jpg",
+        "Caster": "Tamamo.jpg",
+        "Erzsébet": "Elizabeth.jpg",
+        "Scáthach": "Scatach.jpg",
+        "Angra Mainyu": "Angra.jpg",
+        "HassanKing": "KingHassan.jpg",
+        "Frankenstein": "Frank.jpg",
+        "Ryougi Shiki": "Ryougi.jpg",
+        "Avenger": "Edmond.jpg",
+    };
+
+    const baseUrl = "/assets/img/";
+    function getServantImgUrl(name) {
+        const fileName = servantImageUrls[name] || `${name}.jpg`;
+        const fullUrl = baseUrl + fileName;
+        return fullUrl
+    }
+
+    function fallbackImg(img) {
+        img.onerror = null;
+        img.src = "https://placehold.co/64";
+    }
+</script>
+
+</html>

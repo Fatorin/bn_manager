@@ -12,3 +12,9 @@ uid_offset = 0
 bn_server = "127.0.0.1:1123"
 bn_username = "ADMIN_BN_USERNAME"
 bn_password = "ADMIN_BN_PASSWORD"
+# MMR Tracker MySQL database
+mysql_user = "root"
+mysql_password = "YOUR_MYSQL_SECRET_PASSWORD"
+mysql_host = "localhost"
+mysql_port = 3306
+mysql_db_name = "ghost"

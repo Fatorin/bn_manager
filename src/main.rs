@@ -2,6 +2,7 @@ use std::net::SocketAddr;
 use tokio::sync::broadcast;
 use tracing::{error, info, Level};
 mod bot;
+mod database;
 mod handler;
 mod i18n;
 mod model;
@@ -9,6 +10,7 @@ mod routes;
 mod settings;
 mod util;
 mod telnet;
+mod worker;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
@@ -19,7 +21,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     info!("Starting application...");
     settings::init_config();
 
+    info!("Connecting to MySQL...");
+    database::init_mysql_pool().await;
+
     let (shutdown_tx, _) = broadcast::channel(1);
+
+    info!("Starting MMR worker...");
+    worker::mmr::start_mmr_worker(shutdown_tx.subscribe());
 
     let mut bot_shutdown_rx = shutdown_tx.subscribe();
 

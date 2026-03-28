@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Score Board</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="#">Fate Another</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Score Board</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/match_history.html">Match History</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/">Room Status</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container mt-4">
+    <!-- Filter and Controls -->
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <select id="sort_by" class="form-select">
+          <option value="score">Sort by Score</option>
+          <option value="name">Sort by Name</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select id="sort_order" class="form-select">
+          <option value="desc">Descending</option>
+          <option value="asc">Ascending</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <input type="text" id="search_name" class="form-control" placeholder="Search by Name" />
+      </div>
+      <div class="col-md-2">
+        <input type="number" id="limit" class="form-control" placeholder="Limit (max 50)" value="15" min="1" max="50" />
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100" id="applyBtn">Apply</button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody id="scoreTableBody"></tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center my-3">
+      <div>
+        Total: <span id="totalCount" class="badge bg-primary px-3 py-2 fs-6">0</span> items
+      </div>
+      <nav>
+        <ul id="pagination" class="pagination mb-0"></ul>
+      </nav>
+    </div>
+  </div>
+
+  <script>
+    let currentPage = 1;
+
+    function fetchScores() {
+      const limitInput = document.getElementById('limit').value;
+      const limit = Math.min(50, parseInt(limitInput) || 25);
+      const sortBy = document.getElementById('sort_by').value;
+      const sortOrder = document.getElementById('sort_order').value;
+      const searchName = document.getElementById('search_name').value.trim();
+      const offset = (currentPage - 1) * limit;
+
+      const url = new URL('/api/scores', window.location.origin);
+      url.searchParams.set('limit', limit);
+      url.searchParams.set('offset', offset);
+      url.searchParams.set('sort_by', sortBy);
+      url.searchParams.set('sort_order', sortOrder);
+      if (searchName.length > 0) {
+        url.searchParams.set('name', searchName);
+      }
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.getElementById('scoreTableBody');
+          tbody.innerHTML = '';
+
+          data.data.forEach(score => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td scope="col" class="col-6">${score.name}</td>
+              <td scope="col" class="col-6">${score.score}</td>
+            `;
+            tbody.appendChild(row);
+          });
+
+          document.getElementById('totalCount').textContent = data.total;
+
+          renderPagination(data.page, data.pages);
+        })
+        .catch(err => {
+          console.error('Fetch error:', err);
+        });
+    }
+
+    function renderPagination(current, totalPages) {
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = '';
+
+      const createPageItem = (page, text = null, disabled = false, active = false) => {
+        const li = document.createElement('li');
+        li.className = 'page-item';
+        if (disabled) li.classList.add('disabled');
+        if (active) li.classList.add('active');
+
+        const a = document.createElement('a');
+        a.className = 'page-link';
+        a.href = 'javascript:void(0)';
+        a.textContent = text || page;
+
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (!disabled && currentPage !== page) {
+            currentPage = page;
+            fetchScores();
+          }
+        });
+
+        li.appendChild(a);
+        return li;
+      };
+
+      // Previous
+      pagination.appendChild(createPageItem(current - 1, 'Previous', current === 1));
+
+      const maxPagesToShow = 5;
+      let startPage = Math.max(1, current - Math.floor(maxPagesToShow / 2));
+      let endPage = startPage + maxPagesToShow - 1;
+      if (endPage > totalPages) {
+        endPage = totalPages;
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pagination.appendChild(createPageItem(i, null, false, i === current));
+      }
+
+      // Next
+      pagination.appendChild(createPageItem(current + 1, 'Next', current === totalPages || totalPages === 0));
+    }
+
+    document.getElementById('applyBtn').addEventListener('click', () => {
+      currentPage = 1;
+      fetchScores();
+    });
+
+    document.addEventListener('DOMContentLoaded', fetchScores);
+  </script>
+</body>
+
+</html>
