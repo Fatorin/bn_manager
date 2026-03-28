@@ -1,5 +1,5 @@
 # build
-FROM rust:1.83 AS builder
+FROM rust:latest AS builder
 
 RUN rustup target add x86_64-unknown-linux-musl
 RUN apt-get update && apt-get install -y musl-tools

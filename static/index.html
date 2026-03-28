@@ -150,6 +150,14 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand fs-6" href="#" id="title">Fate Another Room Status</a>
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="match_history.html" id="nav_match_history">Match History</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="score_board.html" id="nav_score_board">Score Board</a>
+                </li>
+            </ul>
             <div class="language-select">
                 <i class="fas fa-globe"></i>
                 <select id="languageSelect">
@@ -327,7 +335,9 @@
             "conclusion": "Please follow the rules and help maintain a positive gaming environment! 🚀",
             "report_instruction": "Please report violations immediately in the Discord Report channel. Late reports will not be processed.",
             "rooms_tab": "Rooms",
-            "times_tab": "Schedule"
+            "times_tab": "Schedule",
+            "nav_match_history": "Match History",
+            "nav_score_board": "Score Board"
         },
         "zh-TW": {
             "title": "Fate Another 房間狀態",
@@ -366,7 +376,9 @@
             "conclusion": "請大家遵守規則，共同維護良好的遊戲環境！ 🚀",
             "report_instruction": "請在發生狀況的當下至Discord的Report專區檢舉玩家，逾期不受理。",
             "rooms_tab": "房間列表",
-            "times_tab": "時刻表"
+            "times_tab": "時刻表",
+            "nav_match_history": "對戰紀錄",
+            "nav_score_board": "排行榜"
         },
         "zh-CN": {
             "title": "Fate Another 房间状态",
@@ -405,7 +417,9 @@
             "conclusion": "请大家遵守规则，共同维护良好的游戏环境！ 🚀",
             "report_instruction": "请在发生状况的当下至Discord的Report专区举报玩家，逾期不受理。",
             "rooms_tab": "房间列表",
-            "times_tab": "时间表"
+            "times_tab": "时间表",
+            "nav_match_history": "对战记录",
+            "nav_score_board": "排行榜"
         },
         "ko": {
             "title": "Fate Another 방 상태",
@@ -444,7 +458,9 @@
             "conclusion": "규칙을 준수하고 긍정적인 게임 환경을 유지하는 데 도움을 주세요! 🚀",
             "report_instruction": "규칙 위반이 발생하면 즉시 Discord의 Report 채널에 신고해 주세요. 기한이 지난 신고는 처리되지 않습니다.",
             "rooms_tab": "방 목록",
-            "times_tab": "시간표"
+            "times_tab": "시간표",
+            "nav_match_history": "경기 기록",
+            "nav_score_board": "점수판"
         }
     };
 
@@ -460,6 +476,8 @@
         document.getElementById('player_count').textContent = translations[lang]["player_count"];
         document.getElementById('rooms-tab').textContent = translations[lang]["rooms_tab"];
         document.getElementById('times-tab').textContent = translations[lang]["times_tab"];
+        document.getElementById('nav_match_history').textContent = translations[lang]["nav_match_history"];
+        document.getElementById('nav_score_board').textContent = translations[lang]["nav_score_board"];
 
         document.querySelectorAll(".next-day").forEach(el => {
             el.textContent = translations[lang]["next_day"];

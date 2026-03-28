@@ -209,7 +209,7 @@ fn compute_all_mmr_updates(
         let opponent_avg = if let Some(tid) = team_id {
             let opponent_mmrs: Vec<f64> = team_avgs
                 .iter()
-                .filter(|(&t, _)| t != tid)
+                .filter(|&(&t, _)| t != tid)
                 .map(|(_, &avg)| avg)
                 .collect();
             if opponent_mmrs.is_empty() {
