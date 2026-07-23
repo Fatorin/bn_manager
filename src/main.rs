@@ -21,13 +21,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     info!("Starting application...");
     settings::init_config();
 
-    info!("Connecting to MySQL...");
-    database::init_mysql_pool().await;
-
     let (shutdown_tx, _) = broadcast::channel(1);
 
-    info!("Starting MMR worker...");
-    worker::mmr::start_mmr_worker(shutdown_tx.subscribe());
+    if settings::CONFIG.mmr_enabled {
+        info!("Connecting to MySQL...");
+        database::init_mysql_pool().await;
+
+        info!("Starting MMR worker...");
+        worker::mmr::start_mmr_worker(shutdown_tx.subscribe());
+    } else {
+        info!("MMR feature disabled, skipping MySQL connection and MMR worker");
+    }
 
     let mut bot_shutdown_rx = shutdown_tx.subscribe();
 

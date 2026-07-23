@@ -15,6 +15,6 @@ pub async fn init_mysql_pool() {
     tracing::info!("MySQL connection pool initialized");
 }
 
-pub fn mysql_pool() -> &'static MySqlPool {
-    MYSQL_POOL.get().expect("MySQL pool not initialized")
+pub fn mysql_pool() -> Option<&'static MySqlPool> {
+    MYSQL_POOL.get()
 }

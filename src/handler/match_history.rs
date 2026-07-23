@@ -44,7 +44,13 @@ pub async fn get_match_histories(
         offset = 0;
     }
 
-    let pool = mysql_pool();
+    let Some(pool) = mysql_pool() else {
+        return (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(serde_json::json!({"error": "MMR feature is disabled"})),
+        )
+            .into_response();
+    };
 
     // Fetch games
     let games = match sqlx::query_as::<_, Game>(

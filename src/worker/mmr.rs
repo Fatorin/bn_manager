@@ -41,7 +41,10 @@ pub fn start_mmr_worker(mut shutdown_rx: broadcast::Receiver<()>) {
 }
 
 async fn process_all_mmr() -> Result<(), sqlx::Error> {
-    let pool = mysql_pool();
+    let Some(pool) = mysql_pool() else {
+        warn!("MMR worker: MySQL pool not initialized, skipping");
+        return Ok(());
+    };
     let ids = get_unprocessed_game_ids(pool).await?;
     if ids.is_empty() {
         return Ok(());

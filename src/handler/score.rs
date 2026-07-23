@@ -66,7 +66,13 @@ pub async fn get_scores(Query(params): Query<ScoreQuery>) -> impl IntoResponse {
     }
 
     let where_clause = conditions.join(" AND ");
-    let pool = mysql_pool();
+    let Some(pool) = mysql_pool() else {
+        return (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(serde_json::json!({"error": "MMR feature is disabled"})),
+        )
+            .into_response();
+    };
 
     // Count query
     let count_query = format!("SELECT COUNT(*) FROM scores WHERE {}", where_clause);

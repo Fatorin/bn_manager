@@ -19,10 +19,17 @@ pub struct Config {
     pub bn_server: String,
     pub bn_username: String,
     pub bn_password: String,
+    #[serde(default)]
+    pub mmr_enabled: bool,
+    #[serde(default)]
     pub mysql_user: String,
+    #[serde(default)]
     pub mysql_password: String,
+    #[serde(default)]
     pub mysql_host: String,
+    #[serde(default)]
     pub mysql_port: u16,
+    #[serde(default)]
     pub mysql_db_name: String,
 }
 
@@ -100,21 +107,23 @@ fn validate_config(config: &Config) -> bool {
         error!("BN_PASSWORD is empty");
         return false;
     }
-    if config.mysql_user.is_empty() {
-        error!("MYSQL_USER is empty");
-        return false;
-    }
-    if config.mysql_host.is_empty() {
-        error!("MYSQL_HOST is empty");
-        return false;
-    }
-    if config.mysql_port == 0 {
-        error!("MYSQL_PORT is invalid");
-        return false;
-    }
-    if config.mysql_db_name.is_empty() {
-        error!("MYSQL_DB_NAME is empty");
-        return false;
+    if config.mmr_enabled {
+        if config.mysql_user.is_empty() {
+            error!("MYSQL_USER is empty");
+            return false;
+        }
+        if config.mysql_host.is_empty() {
+            error!("MYSQL_HOST is empty");
+            return false;
+        }
+        if config.mysql_port == 0 {
+            error!("MYSQL_PORT is invalid");
+            return false;
+        }
+        if config.mysql_db_name.is_empty() {
+            error!("MYSQL_DB_NAME is empty");
+            return false;
+        }
     }
     true
 }

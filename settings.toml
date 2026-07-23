@@ -13,6 +13,7 @@ bn_server = "127.0.0.1:1123"
 bn_username = "ADMIN_BN_USERNAME"
 bn_password = "ADMIN_BN_PASSWORD"
 # MMR Tracker MySQL database
+mmr_enabled = false
 mysql_user = "root"
 mysql_password = "YOUR_MYSQL_SECRET_PASSWORD"
 mysql_host = "localhost"
