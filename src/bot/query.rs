@@ -40,3 +40,21 @@ pub async fn create_user(
 
     Ok(user)
 }
+
+pub async fn create_admin_created_account(
+    pool: &SqlitePool,
+    username: &str,
+    admin_discord_id: &str,
+    admin_username: &str,
+) -> Result<(), sqlx::Error> {
+    sqlx::query(
+        "INSERT INTO admin_created_accounts (username, admin_discord_id, admin_username) VALUES (?, ?, ?)",
+    )
+    .bind(username)
+    .bind(admin_discord_id)
+    .bind(admin_username)
+    .execute(pool)
+    .await?;
+
+    Ok(())
+}

@@ -15,6 +15,8 @@ pub struct Config {
     pub discord_token: String,
     pub discord_server_id: u64,
     pub discord_report_channel_id: u64,
+    #[serde(default)]
+    pub discord_admin_role_id: u64,
     pub uid_offset: i32,
     pub bn_server: String,
     pub bn_username: String,

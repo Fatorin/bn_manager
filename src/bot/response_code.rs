@@ -10,6 +10,9 @@ pub enum ResponseCode {
     PasswordReset,
     ReportInvalidInput,
     ReportSuccess,
+    NoPermission,
+    AdminRegisterSuccess,
+    AdminRegisterLogFailed,
 }
 
 impl ResponseCode {
@@ -25,6 +28,9 @@ impl ResponseCode {
             ResponseCode::PasswordReset => "password_reset",
             ResponseCode::ReportInvalidInput => "report_invalid_input",
             ResponseCode::ReportSuccess => "report_success",
+            ResponseCode::NoPermission => "no_permission",
+            ResponseCode::AdminRegisterSuccess => "admin_register_success",
+            ResponseCode::AdminRegisterLogFailed => "admin_register_log_failed",
         }
     }
 }

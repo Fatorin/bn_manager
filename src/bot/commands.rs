@@ -1,4 +1,5 @@
 use crate::i18n;
+use crate::settings::CONFIG;
 use serenity::all::*;
 
 const COMMAND_REGISTER: &'static str = "register";
@@ -6,6 +7,7 @@ const COMMAND_FIND_ACCOUNT: &'static str = "find_account";
 const COMMAND_LINK_ACCOUNT: &'static str = "link_account";
 const COMMAND_CHANGE_PASSWORD: &'static str = "chpass";
 const COMMAND_REPORT: &'static str = "report";
+const COMMAND_ADMIN_REGISTER: &'static str = "admin_register";
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum CommandType {
@@ -13,6 +15,7 @@ pub enum CommandType {
     FindAccount,
     ChangePassword,
     Report,
+    AdminRegister,
 }
 
 impl CommandType {
@@ -22,6 +25,7 @@ impl CommandType {
             CommandType::FindAccount => COMMAND_FIND_ACCOUNT,
             CommandType::ChangePassword => COMMAND_CHANGE_PASSWORD,
             CommandType::Report => COMMAND_REPORT,
+            CommandType::AdminRegister => COMMAND_ADMIN_REGISTER,
         }
     }
 }
@@ -41,18 +45,21 @@ impl std::str::FromStr for CommandType {
             COMMAND_FIND_ACCOUNT => Ok(CommandType::FindAccount),
             COMMAND_CHANGE_PASSWORD => Ok(CommandType::ChangePassword),
             COMMAND_REPORT => Ok(CommandType::Report),
+            COMMAND_ADMIN_REGISTER => Ok(CommandType::AdminRegister),
             _ => Err("unknown command".to_string()),
         }
     }
 }
 
 pub fn get_commands() -> Vec<CreateCommand> {
-    vec![
-        register(),
-        find_account(),
-        change_password(),
-        report(),
-    ]
+    let mut commands = vec![register(), find_account(), change_password(), report()];
+
+    // The admin command is only published when an admin role has been configured.
+    if CONFIG.discord_admin_role_id != 0 {
+        commands.push(admin_register());
+    }
+
+    commands
 }
 
 fn register() -> CreateCommand {
@@ -152,5 +159,24 @@ fn report() -> CreateCommand {
             .description_localized(i18n::LANG_ZH_CN, "附加说明（选填）")
             .description_localized(i18n::LANG_KO_KR, "추가 설명 (선택 사항)")
             .required(false),
+        )
+}
+
+fn admin_register() -> CreateCommand {
+    CreateCommand::new(CommandType::AdminRegister)
+        .description("[Admin] Create an account with a random password")
+        .description_localized(i18n::LANG_ZH_TW, "[管理員] 建立帳號並產生隨機密碼")
+        .description_localized(i18n::LANG_ZH_CN, "[管理员] 建立账号并产生随机密码")
+        .description_localized(
+            i18n::LANG_KO_KR,
+            "[관리자] 계정을 생성하고 임의의 비밀번호를 발급",
+        )
+        .dm_permission(false)
+        .add_option(
+            CreateCommandOption::new(CommandOptionType::String, "username", "UserName")
+                .description_localized(i18n::LANG_ZH_TW, "使用者名稱")
+                .description_localized(i18n::LANG_ZH_CN, "用戶名")
+                .description_localized(i18n::LANG_KO_KR, "사용자 이름")
+                .required(true),
         )
 }

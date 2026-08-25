@@ -8,6 +8,8 @@ db_path = "./app/db/database.sqlite"
 discord_token = "YOUR_DISCORD_BOT_TOKEN"
 discord_server_id = 0
 discord_report_channel_id = 0
+# Members holding this role can use /admin_register. Leave it as 0 to disable the command.
+discord_admin_role_id = 0
 uid_offset = 0
 bn_server = "127.0.0.1:1123"
 bn_username = "ADMIN_BN_USERNAME"

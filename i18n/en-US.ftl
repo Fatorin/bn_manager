@@ -8,3 +8,6 @@ not_registered = You are not registered yet. Please enter /register to create an
 password_reset = Your username: {$username}, password has been reset. Your new password is: {$password}.
 report_invalid_input = Your report information is incomplete. Please check and try again.
 report_success = Your report has been submitted successfully. Please wait for administrator processing.
+no_permission = You do not have permission to use this command.
+admin_register_success = Account created. Username: {$username}, Password: {$password}. Please pass these credentials to the player.
+admin_register_log_failed = Account created. Username: {$username}, Password: {$password}. Warning: the audit record could not be saved, please notify the server administrator.

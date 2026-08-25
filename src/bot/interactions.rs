@@ -1,5 +1,5 @@
 use crate::bot::commands::CommandType;
-use crate::bot::query::{create_user, get_user_by_discord_id};
+use crate::bot::query::{create_admin_created_account, create_user, get_user_by_discord_id};
 use crate::bot::response_code::ResponseCode;
 use crate::i18n::I18N;
 use crate::model::user::User;
@@ -10,8 +10,8 @@ use rand::RngExt;
 use regex::Regex;
 use serenity::all::{
     ChannelId, CommandDataOptionValue, CommandInteraction, Context, CreateEmbed,
-    CreateInteractionResponse, CreateInteractionResponseMessage, CreateMessage, Interaction,
-    Timestamp,
+    CreateInteractionResponse, CreateInteractionResponseMessage, CreateMessage, GuildId,
+    Interaction, RoleId, Timestamp,
 };
 use serenity::Error;
 use std::fs;
@@ -33,6 +33,7 @@ pub async fn handle_interaction(
                     handle_change_password(db, client, ctx, interaction).await?
                 }
                 CommandType::Report => handle_report(ctx, interaction).await?,
+                CommandType::AdminRegister => handle_admin_register(db, ctx, interaction).await?,
             },
             Err(err) => eprintln!("unknown interaction, ex:{:?}", err),
         },
@@ -276,6 +277,80 @@ async fn handle_report(ctx: &Context, interaction: &Interaction) -> serenity::Re
     }
 
     Ok(())
+}
+
+async fn handle_admin_register(
+    db: &sqlx::sqlite::SqlitePool,
+    ctx: &Context,
+    interaction: &Interaction,
+) -> serenity::Result<(), Error> {
+    if let Interaction::Command(command) = interaction {
+        let locale = command.locale.as_str();
+
+        if !is_admin(command) {
+            command_send_message(
+                ctx,
+                command,
+                I18N.get(ResponseCode::NoPermission.to_i18n_key(), locale),
+            )
+            .await?;
+            return Ok(());
+        }
+
+        let options = &command.data.options;
+
+        let username = options
+            .iter()
+            .find(|opt| opt.name == "username")
+            .and_then(|opt| opt.value.as_str())
+            .unwrap_or_default();
+
+        let password = match write_user_data(&username) {
+            Ok(password) => password,
+            Err(err) => {
+                println!("admin create user failed, ex:{:?}", err);
+                command_send_message(ctx, command, I18N.get(err.to_i18n_key(), locale)).await?;
+                return Ok(());
+            }
+        };
+
+        let admin_discord_id = command.user.id.to_string();
+        let admin_username = command.user.name.as_str();
+
+        // The account file already exists at this point, so a failed audit write must
+        // still hand the credentials back to the admin instead of swallowing them.
+        let response_code =
+            match create_admin_created_account(db, username, &admin_discord_id, admin_username)
+                .await
+            {
+                Ok(_) => ResponseCode::AdminRegisterSuccess,
+                Err(err) => {
+                    println!("record admin created account failed, ex:{}", err);
+                    ResponseCode::AdminRegisterLogFailed
+                }
+            };
+
+        let args = vec![("username", username), ("password", password.as_str())];
+        let message = I18N.get_with_args(response_code.to_i18n_key(), locale, &args);
+        command_send_message(ctx, command, message).await?;
+    }
+
+    Ok(())
+}
+
+fn is_admin(command: &CommandInteraction) -> bool {
+    let admin_role_id = CONFIG.discord_admin_role_id;
+    if admin_role_id == 0 {
+        return false;
+    }
+
+    if command.guild_id != Some(GuildId::new(CONFIG.discord_server_id)) {
+        return false;
+    }
+
+    command.member.as_ref().map_or(false, |member| {
+        member.roles.contains(&RoleId::new(admin_role_id))
+    })
 }
 
 async fn command_send_message(
