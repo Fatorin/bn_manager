@@ -2,8 +2,6 @@ use crate::settings::CONFIG;
 use crate::telnet;
 use serenity::all::GatewayIntents;
 use serenity::Client;
-use sqlx::migrate::Migrator;
-use std::path::Path;
 use std::time::Duration;
 use tokio::sync::broadcast::Receiver;
 use tokio::time::timeout;
@@ -45,11 +43,10 @@ pub async fn start_discord_bot(
         .await
         .map_err(|e| format!("Couldn't connect to database: {}", e))?;
 
-    let migrations = Migrator::new(Path::new("./migrations"))
-        .await
-        .map_err(|e| format!("Couldn't load migrations: {}", e))?;
-
-    migrations
+    // Migrations are embedded at compile time, so the running binary no longer
+    // needs a ./migrations directory beside it. build.rs makes cargo rebuild
+    // whenever a migration file is added or changed.
+    sqlx::migrate!("./migrations")
         .run(&database)
         .await
         .map_err(|e| format!("Couldn't run database migrations: {}", e))?;
