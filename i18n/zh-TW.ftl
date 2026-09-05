@@ -11,3 +11,6 @@ report_success = 您的檢舉已成功，請等待管理員處理。
 no_permission = 您沒有使用此指令的權限。
 admin_register_success = 帳號建立成功。使用者名稱：{$username}，密碼：{$password}。請將此資訊提供給玩家。
 admin_register_log_failed = 帳號建立成功。使用者名稱：{$username}，密碼：{$password}。注意：稽核紀錄寫入失敗，請通知伺服器管理員。
+admin_find_account_found = <@{$discord_id}> 註冊的帳號是：{$username}
+admin_find_account_not_found = 查無資料。該玩家尚未註冊，或這個帳號是管理員建立的，因此沒有綁定任何 Discord 使用者。
+admin_find_account_invalid_input = 請只填寫 user 或 username 其中一個。

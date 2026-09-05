@@ -13,6 +13,9 @@ pub enum ResponseCode {
     NoPermission,
     AdminRegisterSuccess,
     AdminRegisterLogFailed,
+    AdminFindAccountFound,
+    AdminFindAccountNotFound,
+    AdminFindAccountInvalidInput,
 }
 
 impl ResponseCode {
@@ -31,6 +34,9 @@ impl ResponseCode {
             ResponseCode::NoPermission => "no_permission",
             ResponseCode::AdminRegisterSuccess => "admin_register_success",
             ResponseCode::AdminRegisterLogFailed => "admin_register_log_failed",
+            ResponseCode::AdminFindAccountFound => "admin_find_account_found",
+            ResponseCode::AdminFindAccountNotFound => "admin_find_account_not_found",
+            ResponseCode::AdminFindAccountInvalidInput => "admin_find_account_invalid_input",
         }
     }
 }

@@ -1,5 +1,7 @@
 use crate::bot::commands::CommandType;
-use crate::bot::query::{create_admin_created_account, create_user, get_user_by_discord_id};
+use crate::bot::query::{
+    create_admin_created_account, create_user, get_user_by_discord_id, get_user_by_username,
+};
 use crate::bot::response_code::ResponseCode;
 use crate::i18n::I18N;
 use crate::model::user::User;
@@ -34,6 +36,9 @@ pub async fn handle_interaction(
                 }
                 CommandType::Report => handle_report(ctx, interaction).await?,
                 CommandType::AdminRegister => handle_admin_register(db, ctx, interaction).await?,
+                CommandType::AdminFindAccount => {
+                    handle_admin_find_account(db, ctx, interaction).await?
+                }
             },
             Err(err) => eprintln!("unknown interaction, ex:{:?}", err),
         },
@@ -332,6 +337,87 @@ async fn handle_admin_register(
 
         let args = vec![("username", username), ("password", password.as_str())];
         let message = I18N.get_with_args(response_code.to_i18n_key(), locale, &args);
+        command_send_message(ctx, command, message).await?;
+    }
+
+    Ok(())
+}
+
+async fn handle_admin_find_account(
+    db: &sqlx::sqlite::SqlitePool,
+    ctx: &Context,
+    interaction: &Interaction,
+) -> serenity::Result<(), Error> {
+    if let Interaction::Command(command) = interaction {
+        let locale = command.locale.as_str();
+
+        if !is_admin(command) {
+            command_send_message(
+                ctx,
+                command,
+                I18N.get(ResponseCode::NoPermission.to_i18n_key(), locale),
+            )
+            .await?;
+            return Ok(());
+        }
+
+        let options = &command.data.options;
+
+        let target_user = options
+            .iter()
+            .find(|opt| opt.name == "user")
+            .and_then(|opt| {
+                if let CommandDataOptionValue::User(user_id) = &opt.value {
+                    Some(*user_id)
+                } else {
+                    None
+                }
+            });
+
+        let target_username = options
+            .iter()
+            .find(|opt| opt.name == "username")
+            .and_then(|opt| opt.value.as_str())
+            .filter(|name| !name.is_empty());
+
+        // Both directions answer with the same pair, but giving both or neither is
+        // ambiguous about which one to search on.
+        let lookup = match (target_user, target_username) {
+            (Some(user_id), None) => get_user_by_discord_id(db, &user_id.to_string()).await,
+            (None, Some(username)) => get_user_by_username(db, username).await,
+            _ => {
+                command_send_message(
+                    ctx,
+                    command,
+                    I18N.get(
+                        ResponseCode::AdminFindAccountInvalidInput.to_i18n_key(),
+                        locale,
+                    ),
+                )
+                .await?;
+                return Ok(());
+            }
+        };
+
+        let message = match lookup {
+            Ok(Some(user)) => {
+                let args = vec![
+                    ("username", user.username.as_str()),
+                    ("discord_id", user.discord_id.as_str()),
+                ];
+                I18N.get_with_args(
+                    ResponseCode::AdminFindAccountFound.to_i18n_key(),
+                    locale,
+                    &args,
+                )
+            }
+            Ok(None) => I18N.get(ResponseCode::AdminFindAccountNotFound.to_i18n_key(), locale),
+            Err(err) => {
+                println!("admin find account failed, ex:{}", err);
+                I18N.get(ResponseCode::ServerError.to_i18n_key(), locale)
+            }
+        };
+
         command_send_message(ctx, command, message).await?;
     }
 

@@ -8,6 +8,7 @@ const COMMAND_LINK_ACCOUNT: &'static str = "link_account";
 const COMMAND_CHANGE_PASSWORD: &'static str = "chpass";
 const COMMAND_REPORT: &'static str = "report";
 const COMMAND_ADMIN_REGISTER: &'static str = "admin_register";
+const COMMAND_ADMIN_FIND_ACCOUNT: &'static str = "admin_find_account";
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum CommandType {
@@ -16,6 +17,7 @@ pub enum CommandType {
     ChangePassword,
     Report,
     AdminRegister,
+    AdminFindAccount,
 }
 
 impl CommandType {
@@ -26,6 +28,7 @@ impl CommandType {
             CommandType::ChangePassword => COMMAND_CHANGE_PASSWORD,
             CommandType::Report => COMMAND_REPORT,
             CommandType::AdminRegister => COMMAND_ADMIN_REGISTER,
+            CommandType::AdminFindAccount => COMMAND_ADMIN_FIND_ACCOUNT,
         }
     }
 }
@@ -46,6 +49,7 @@ impl std::str::FromStr for CommandType {
             COMMAND_CHANGE_PASSWORD => Ok(CommandType::ChangePassword),
             COMMAND_REPORT => Ok(CommandType::Report),
             COMMAND_ADMIN_REGISTER => Ok(CommandType::AdminRegister),
+            COMMAND_ADMIN_FIND_ACCOUNT => Ok(CommandType::AdminFindAccount),
             _ => Err("unknown command".to_string()),
         }
     }
@@ -54,9 +58,10 @@ impl std::str::FromStr for CommandType {
 pub fn get_commands() -> Vec<CreateCommand> {
     let mut commands = vec![register(), find_account(), change_password(), report()];
 
-    // The admin command is only published when at least one admin role is configured.
+    // The admin commands are only published when at least one admin role is configured.
     if CONFIG.has_admin_roles() {
         commands.push(admin_register());
+        commands.push(admin_find_account());
     }
 
     commands
@@ -178,5 +183,35 @@ fn admin_register() -> CreateCommand {
                 .description_localized(i18n::LANG_ZH_CN, "用戶名")
                 .description_localized(i18n::LANG_KO_KR, "사용자 이름")
                 .required(true),
+        )
+}
+
+fn admin_find_account() -> CreateCommand {
+    CreateCommand::new(CommandType::AdminFindAccount)
+        .description("[Admin] Look up a player's account by Discord user, or the other way round")
+        .description_localized(i18n::LANG_ZH_TW, "[管理員] 用 Discord 使用者或帳號名稱互查")
+        .description_localized(i18n::LANG_ZH_CN, "[管理员] 用 Discord 用户或账号名称互查")
+        .description_localized(
+            i18n::LANG_KO_KR,
+            "[관리자] 디스코드 사용자 또는 계정 이름으로 조회",
+        )
+        .dm_permission(false)
+        .add_option(
+            CreateCommandOption::new(CommandOptionType::User, "user", "Discord user to look up")
+                .description_localized(i18n::LANG_ZH_TW, "要查詢的 Discord 使用者")
+                .description_localized(i18n::LANG_ZH_CN, "要查询的 Discord 用户")
+                .description_localized(i18n::LANG_KO_KR, "조회할 디스코드 사용자")
+                .required(false),
+        )
+        .add_option(
+            CreateCommandOption::new(
+                CommandOptionType::String,
+                "username",
+                "Account name to look up",
+            )
+            .description_localized(i18n::LANG_ZH_TW, "要查詢的帳號名稱")
+            .description_localized(i18n::LANG_ZH_CN, "要查询的账号名称")
+            .description_localized(i18n::LANG_KO_KR, "조회할 계정 이름")
+            .required(false),
         )
 }

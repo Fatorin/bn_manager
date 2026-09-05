@@ -23,7 +23,9 @@ BN_MANAGER 是一個專為 [PVPGN](https://github.com/pvpgn/pvpgn-server) 設計
 
 持有 `discord_admin_role_ids` 所列任一身分組的管理員，另外可以使用：
 - `/admin_register` - 建立帳號並產生隨機密碼（回覆僅管理員可見），同時會將建立者記錄到 `admin_created_accounts` 資料表。
-  `discord_admin_role_ids` 留空時不會註冊此指令。
+- `/admin_find_account` - 用 Discord 使用者查帳號，或用帳號名稱反查 Discord 使用者，兩個參數擇一填寫。
+  只查得到玩家自行 `/register` 的帳號；`/admin_register` 建立的帳號不綁定 Discord，因此查不到。
+  `discord_admin_role_ids` 留空時不會註冊這些指令。
 
 ## 使用說明
 

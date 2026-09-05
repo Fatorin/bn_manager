@@ -11,3 +11,6 @@ report_success = 신고가 성공적으로 제출되었습니다. 관리자 처�
 no_permission = 이 명령어를 사용할 권한이 없습니다.
 admin_register_success = 계정이 생성되었습니다. 사용자 이름: {$username}, 비밀번호: {$password}. 이 정보를 플레이어에게 전달해 주세요.
 admin_register_log_failed = 계정이 생성되었습니다. 사용자 이름: {$username}, 비밀번호: {$password}. 주의: 감사 기록 저장에 실패했습니다. 서버 관리자에게 알려 주세요.
+admin_find_account_found = <@{$discord_id}> 님이 등록한 계정: {$username}
+admin_find_account_not_found = 결과가 없습니다. 해당 플레이어가 아직 등록하지 않았거나, 관리자가 생성한 계정이라 디스코드 사용자와 연결되어 있지 않습니다.
+admin_find_account_invalid_input = user 또는 username 중 하나만 입력해 주세요.

@@ -11,3 +11,6 @@ report_success = Your report has been submitted successfully. Please wait for ad
 no_permission = You do not have permission to use this command.
 admin_register_success = Account created. Username: {$username}, Password: {$password}. Please pass these credentials to the player.
 admin_register_log_failed = Account created. Username: {$username}, Password: {$password}. Warning: the audit record could not be saved, please notify the server administrator.
+admin_find_account_found = <@{$discord_id}> is registered as: {$username}
+admin_find_account_not_found = No match. Either that player has not registered, or the account was created by an admin and is therefore not linked to any Discord user.
+admin_find_account_invalid_input = Please fill in exactly one of user or username.
