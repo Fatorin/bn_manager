@@ -5,6 +5,7 @@ use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
+use tracing::{error, warn};
 
 pub static I18N: Lazy<I18n> = Lazy::new(|| {
     let mut i18n = I18n::new(LANG_EN_US);
@@ -110,21 +111,99 @@ impl I18n {
     }
 
     fn get_locale_text(&self, key: &str, locale: &str, args: Option<&FluentArgs>) -> String {
-        let bundle = self
-            .bundles
-            .get(locale)
-            .or_else(|| self.bundles.get(&self.default_locale));
+        if let Some(text) = self.format_from_bundle(key, locale, args) {
+            return text;
+        }
 
-        if let Some(bundle) = bundle {
-            if let Some(msg) = bundle.get_message(key) {
-                if let Some(pattern) = msg.value() {
-                    let mut errors = vec![];
-                    let result = bundle.format_pattern(pattern, args, &mut errors);
-                    return result.to_string();
-                }
+        // A locale file that loads but is missing this key still has to fall back to
+        // the default locale. Returning the bare key here silently swallows the
+        // interpolated arguments, which is how a stale ftl file turns a successful
+        // registration into a reply containing no username and no password.
+        if locale != self.default_locale {
+            if let Some(text) = self.format_from_bundle(key, &self.default_locale, args) {
+                warn!(
+                    "i18n key `{}` missing for locale `{}`, fell back to `{}`",
+                    key, locale, self.default_locale
+                );
+                return text;
             }
         }
 
+        error!("i18n key `{}` is missing from every loaded locale", key);
         key.to_string()
+    }
+
+    fn format_from_bundle(
+        &self,
+        key: &str,
+        locale: &str,
+        args: Option<&FluentArgs>,
+    ) -> Option<String> {
+        let bundle = self.bundles.get(locale)?;
+        let pattern = bundle.get_message(key)?.value()?;
+
+        let mut errors = vec![];
+        let result = bundle.format_pattern(pattern, args, &mut errors);
+        if !errors.is_empty() {
+            warn!(
+                "i18n formatting errors for key `{}` in locale `{}`: {:?}",
+                key, locale, errors
+            );
+        }
+
+        Some(result.to_string())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::i18n::LANG_ZH_TW;
+
+    const EN: &str = r#"
+greeting = Hello {$name}
+farewell = Bye {$name}
+"#;
+
+    const TW: &str = r#"
+greeting = 哈囉 {$name}
+"#;
+
+    fn i18n() -> I18n {
+        let mut i18n = I18n::new(LANG_EN_US);
+        i18n.add_resource_from_string(LANG_EN_US, EN).unwrap();
+        i18n.add_resource_from_string(LANG_ZH_TW, TW).unwrap();
+        i18n
+    }
+
+    #[test]
+    fn uses_the_requested_locale_when_the_key_exists() {
+        assert_eq!(
+            i18n().get_with_arg("greeting", LANG_ZH_TW, "name", "abc"),
+            "哈囉 abc"
+        );
+    }
+
+    #[test]
+    fn falls_back_to_the_default_locale_when_the_key_is_missing() {
+        // The zh-TW bundle loads fine but has no `farewell`. This is the shape of a
+        // stale translation file in a deployment, and the arguments must survive it.
+        assert_eq!(
+            i18n().get_with_arg("farewell", LANG_ZH_TW, "name", "abc"),
+            "Bye abc"
+        );
+    }
+
+    #[test]
+    fn falls_back_to_the_default_locale_when_the_locale_is_unknown() {
+        assert_eq!(
+            i18n().get_with_arg("greeting", "fr", "name", "abc"),
+            "Hello abc"
+        );
+    }
+
+    #[test]
+    fn returns_the_key_only_when_nothing_defines_it() {
+        assert_eq!(i18n().get("nope", LANG_ZH_TW), "nope");
     }
 }
