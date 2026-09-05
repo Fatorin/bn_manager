@@ -21,9 +21,9 @@ BN_MANAGER 是一個專為 [PVPGN](https://github.com/pvpgn/pvpgn-server) 設計
 - `/forget_password` - 忘記密碼
 - `/report` - 檢舉玩家
 
-持有 `discord_admin_role_id` 所指定身分組的管理員，另外可以使用：
+持有 `discord_admin_role_ids` 所列任一身分組的管理員，另外可以使用：
 - `/admin_register` - 建立帳號並產生隨機密碼（回覆僅管理員可見），同時會將建立者記錄到 `admin_created_accounts` 資料表。
-  未設定 `discord_admin_role_id`（保持 0）時不會註冊此指令。
+  `discord_admin_role_ids` 留空時不會註冊此指令。
 
 ## 使用說明
 

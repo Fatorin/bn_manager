@@ -16,7 +16,7 @@ pub struct Config {
     pub discord_server_id: u64,
     pub discord_report_channel_id: u64,
     #[serde(default)]
-    pub discord_admin_role_id: u64,
+    pub discord_admin_role_ids: Vec<u64>,
     pub uid_offset: i32,
     pub bn_server: String,
     pub bn_username: String,
@@ -36,6 +36,14 @@ pub struct Config {
 }
 
 impl Config {
+    pub fn has_admin_roles(&self) -> bool {
+        self.discord_admin_role_ids.iter().any(|id| *id != 0)
+    }
+
+    pub fn is_admin_role(&self, role_id: u64) -> bool {
+        role_id != 0 && self.discord_admin_role_ids.contains(&role_id)
+    }
+
     pub fn mysql_connection_string(&self) -> String {
         format!(
             "mysql://{}:{}@{}:{}/{}",

@@ -21,9 +21,9 @@ Players can use the following commands in the Discord channel:
 - `/forget_password` - Reset forgotten password
 - `/report` - Report a player
 
-Administrators holding the role configured in `discord_admin_role_id` can additionally use:
+Administrators holding any of the roles listed in `discord_admin_role_ids` can additionally use:
 - `/admin_register` - Create an account with a randomly generated password (the reply is visible only to the admin), and record the creator in the `admin_created_accounts` table.
-  The command is not registered while `discord_admin_role_id` is left at 0.
+  The command is not registered while `discord_admin_role_ids` is empty.
 
 ## Usage Instructions
 

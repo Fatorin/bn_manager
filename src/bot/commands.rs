@@ -54,8 +54,8 @@ impl std::str::FromStr for CommandType {
 pub fn get_commands() -> Vec<CreateCommand> {
     let mut commands = vec![register(), find_account(), change_password(), report()];
 
-    // The admin command is only published when an admin role has been configured.
-    if CONFIG.discord_admin_role_id != 0 {
+    // The admin command is only published when at least one admin role is configured.
+    if CONFIG.has_admin_roles() {
         commands.push(admin_register());
     }
 

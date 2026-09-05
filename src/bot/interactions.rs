@@ -11,7 +11,7 @@ use regex::Regex;
 use serenity::all::{
     ChannelId, CommandDataOptionValue, CommandInteraction, Context, CreateEmbed,
     CreateInteractionResponse, CreateInteractionResponseMessage, CreateMessage, GuildId,
-    Interaction, RoleId, Timestamp,
+    Interaction, Timestamp,
 };
 use serenity::Error;
 use std::fs;
@@ -339,8 +339,7 @@ async fn handle_admin_register(
 }
 
 fn is_admin(command: &CommandInteraction) -> bool {
-    let admin_role_id = CONFIG.discord_admin_role_id;
-    if admin_role_id == 0 {
+    if !CONFIG.has_admin_roles() {
         return false;
     }
 
@@ -349,7 +348,10 @@ fn is_admin(command: &CommandInteraction) -> bool {
     }
 
     command.member.as_ref().map_or(false, |member| {
-        member.roles.contains(&RoleId::new(admin_role_id))
+        member
+            .roles
+            .iter()
+            .any(|role| CONFIG.is_admin_role(role.get()))
     })
 }
 
