@@ -2,3 +2,5 @@
 /app
 .idea
 .env
+# Patch note contents are deployed separately; only the page is tracked.
+/static/patch_notes/

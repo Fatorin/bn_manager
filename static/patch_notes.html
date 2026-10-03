@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title id="page_title">Fate Another Patch Notes</title>
+    <meta name="description" content="Fate / Another V Real FTW patch notes">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <style>
+        .navbar {
+            padding: 0.25rem 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 0.5rem;
+        }
+
+        .accordion-button {
+            font-weight: 600;
+            padding: 0.6rem 1rem;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: #eef4ff;
+            color: #0d6efd;
+        }
+
+        .version-date {
+            font-weight: 400;
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-left: 0.6rem;
+        }
+
+        .accordion-body {
+            padding: 0.75rem 1rem 1rem;
+        }
+
+        .patch-section {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .patch-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: #dc3545;
+            border-left: 3px solid #dc3545;
+            padding-left: 8px;
+            margin-bottom: 8px;
+        }
+
+        .patch-item {
+            margin-left: 12px;
+            margin-bottom: 8px;
+        }
+
+        .patch-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-title {
+            font-weight: 600;
+            color: #0d6efd;
+        }
+
+        .item-desc {
+            margin-left: 16px;
+            line-height: 1.45;
+            color: #495057;
+            font-size: 0.92rem;
+        }
+
+        .language-select select {
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand fs-6" href="/" id="brand">Fate Another</a>
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/" id="nav_room_status">Room Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/match_history.html" id="nav_match_history">Match History</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/score_board.html" id="nav_score_board">Score Board</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" id="nav_patch_notes">Patch Notes</a>
+                </li>
+            </ul>
+            <div class="language-select">
+                <i class="fas fa-globe"></i>
+                <select id="languageSelect">
+                    <option value="en">English</option>
+                    <option value="zh-TW">繁體中文</option>
+                    <option value="zh-CN">简体中文</option>
+                    <option value="ko">한국어</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="h5 mb-1" id="heading">Patch Notes</h1>
+        <p class="small text-muted mb-3" id="subheading">Changes to Fate / Another V Real FTW, newest first.</p>
+
+        <div class="accordion mb-4" id="patchAccordion"></div>
+    </div>
+
+    <script>
+        const UI = {
+            "en": {
+                "page_title": "Fate Another Patch Notes",
+                "heading": "Patch Notes",
+                "subheading": "Changes to Fate / Another V Real FTW, newest first.",
+                "latest": "Latest",
+                "nav_room_status": "Room Status",
+                "nav_match_history": "Match History",
+                "nav_score_board": "Score Board",
+                "nav_patch_notes": "Patch Notes"
+            },
+            "zh-TW": {
+                "page_title": "Fate Another 版本更新",
+                "heading": "版本更新",
+                "subheading": "Fate / Another V Real FTW 的改動內容，由新到舊。",
+                "latest": "最新",
+                "nav_room_status": "房間狀態",
+                "nav_match_history": "對戰紀錄",
+                "nav_score_board": "排行榜",
+                "nav_patch_notes": "版本更新"
+            },
+            "zh-CN": {
+                "page_title": "Fate Another 版本更新",
+                "heading": "版本更新",
+                "subheading": "Fate / Another V Real FTW 的改动内容，由新到旧。",
+                "latest": "最新",
+                "nav_room_status": "房间状态",
+                "nav_match_history": "对战记录",
+                "nav_score_board": "排行榜",
+                "nav_patch_notes": "版本更新"
+            },
+            "ko": {
+                "page_title": "Fate Another 패치 노트",
+                "heading": "패치 노트",
+                "subheading": "Fate / Another V Real FTW의 변경 사항, 최신순.",
+                "latest": "최신",
+                "nav_room_status": "방 상태",
+                "nav_match_history": "경기 기록",
+                "nav_score_board": "점수판",
+                "nav_patch_notes": "패치 노트"
+            }
+        };
+
+        // 版本內容放在 patch_notes/ 底下，一個版本一個 JSON 檔（語系 → 區塊列表）。
+        // 新增版本時：新增 patch_notes/<版本>.json，並在 versions.json 最前面加一筆，HTML 不用動。
+        const NOTES_DIR = 'patch_notes/';
+        const accordion = document.getElementById('patchAccordion');
+        const notesCache = {};
+        let versions = [];
+        let currentLang = 'en';
+
+        function loadNotes(file) {
+            if (!notesCache[file]) {
+                notesCache[file] = fetch(NOTES_DIR + file).then(function (res) {
+                    if (!res.ok) {
+                        throw new Error(res.status + ' ' + file);
+                    }
+                    return res.json();
+                });
+            }
+            return notesCache[file];
+        }
+
+        function fillBody(body, patch, lang) {
+            body.textContent = '…';
+            loadNotes(patch.file).then(function (notes) {
+                // 語系切換後，舊語系的請求晚回來就不要蓋掉畫面。
+                if (lang !== currentLang) {
+                    return;
+                }
+                const sections = notes[lang] || notes["en"] || [];
+                body.innerHTML = '';
+
+                sections.forEach(function (section) {
+                    const sec = document.createElement('div');
+                    sec.className = 'patch-section';
+
+                    const title = document.createElement('div');
+                    title.className = 'section-title';
+                    title.textContent = '■ ' + section.h;
+                    sec.appendChild(title);
+
+                    section.items.forEach(function (entry) {
+                        const wrap = document.createElement('div');
+                        wrap.className = 'patch-item';
+
+                        const itemTitle = document.createElement('div');
+                        itemTitle.className = 'item-title';
+                        itemTitle.textContent = '◆ ' + entry.t;
+                        wrap.appendChild(itemTitle);
+
+                        (entry.d || []).forEach(function (line) {
+                            const desc = document.createElement('div');
+                            desc.className = 'item-desc';
+                            desc.textContent = line;
+                            wrap.appendChild(desc);
+                        });
+
+                        sec.appendChild(wrap);
+                    });
+
+                    body.appendChild(sec);
+                });
+            }).catch(function (err) {
+                body.textContent = String(err);
+            });
+        }
+
+        function render(lang) {
+            const t = UI[lang];
+            accordion.innerHTML = '';
+
+            versions.forEach(function (patch, index) {
+                const collapseId = 'patch' + index;
+
+                const item = document.createElement('div');
+                item.className = 'accordion-item';
+
+                const header = document.createElement('h2');
+                header.className = 'accordion-header';
+
+                const button = document.createElement('button');
+                button.className = 'accordion-button' + (index === 0 ? '' : ' collapsed');
+                button.type = 'button';
+                button.setAttribute('data-bs-toggle', 'collapse');
+                button.setAttribute('data-bs-target', '#' + collapseId);
+                button.setAttribute('aria-expanded', index === 0 ? 'true' : 'false');
+                button.setAttribute('aria-controls', collapseId);
+                button.appendChild(document.createTextNode(patch.v));
+
+                const date = document.createElement('span');
+                date.className = 'version-date';
+                date.textContent = patch.date;
+                button.appendChild(date);
+
+                if (index === 0) {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge bg-primary ms-2';
+                    badge.textContent = t["latest"];
+                    button.appendChild(badge);
+                }
+
+                header.appendChild(button);
+                item.appendChild(header);
+
+                const collapse = document.createElement('div');
+                collapse.id = collapseId;
+                collapse.className = 'accordion-collapse collapse' + (index === 0 ? ' show' : '');
+                collapse.setAttribute('data-bs-parent', '#patchAccordion');
+
+                const body = document.createElement('div');
+                body.className = 'accordion-body';
+                collapse.appendChild(body);
+                item.appendChild(collapse);
+                accordion.appendChild(item);
+
+                // 只有最新版一開始就載入，其他版本展開時才去抓。
+                if (index === 0) {
+                    fillBody(body, patch, lang);
+                } else {
+                    collapse.addEventListener('show.bs.collapse', function () {
+                        fillBody(body, patch, currentLang);
+                    }, { once: true });
+                }
+            });
+        }
+
+        function setLanguage(lang) {
+            const t = UI[lang];
+            currentLang = lang;
+            document.title = t["page_title"];
+            document.getElementById('page_title').textContent = t["page_title"];
+            document.getElementById('heading').textContent = t["heading"];
+            document.getElementById('subheading').textContent = t["subheading"];
+            document.getElementById('nav_room_status').textContent = t["nav_room_status"];
+            document.getElementById('nav_match_history').textContent = t["nav_match_history"];
+            document.getElementById('nav_score_board').textContent = t["nav_score_board"];
+            document.getElementById('nav_patch_notes').textContent = t["nav_patch_notes"];
+            document.getElementById('languageSelect').value = lang;
+            render(lang);
+        }
+
+        document.getElementById('languageSelect').addEventListener('change', function () {
+            setLanguage(this.value);
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const userLang = navigator.language || navigator.userLanguage;
+            const lang = (userLang.startsWith('zh-TW') || userLang === 'zh-TW') ? 'zh-TW' :
+                (userLang.startsWith('zh-CN') || userLang === 'zh-CN') ? 'zh-CN' :
+                    (userLang.startsWith('ko') || userLang === 'ko') ? 'ko' : 'en';
+            fetch(NOTES_DIR + 'versions.json').then(function (res) {
+                return res.json();
+            }).then(function (list) {
+                versions = list;
+                setLanguage(lang);
+            }).catch(function (err) {
+                accordion.textContent = String(err);
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -157,6 +157,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="score_board.html" id="nav_score_board">Score Board</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="patch_notes.html" id="nav_patch_notes">Patch Notes</a>
+                </li>
             </ul>
             <div class="language-select">
                 <i class="fas fa-globe"></i>
@@ -337,7 +340,8 @@
             "rooms_tab": "Rooms",
             "times_tab": "Schedule",
             "nav_match_history": "Match History",
-            "nav_score_board": "Score Board"
+            "nav_score_board": "Score Board",
+            "nav_patch_notes": "Patch Notes"
         },
         "zh-TW": {
             "title": "Fate Another 房間狀態",
@@ -378,7 +382,8 @@
             "rooms_tab": "房間列表",
             "times_tab": "時刻表",
             "nav_match_history": "對戰紀錄",
-            "nav_score_board": "排行榜"
+            "nav_score_board": "排行榜",
+            "nav_patch_notes": "版本更新"
         },
         "zh-CN": {
             "title": "Fate Another 房间状态",
@@ -419,7 +424,8 @@
             "rooms_tab": "房间列表",
             "times_tab": "时间表",
             "nav_match_history": "对战记录",
-            "nav_score_board": "排行榜"
+            "nav_score_board": "排行榜",
+            "nav_patch_notes": "版本更新"
         },
         "ko": {
             "title": "Fate Another 방 상태",
@@ -460,7 +466,8 @@
             "rooms_tab": "방 목록",
             "times_tab": "시간표",
             "nav_match_history": "경기 기록",
-            "nav_score_board": "점수판"
+            "nav_score_board": "점수판",
+            "nav_patch_notes": "패치 노트"
         }
     };
 
@@ -478,6 +485,7 @@
         document.getElementById('times-tab').textContent = translations[lang]["times_tab"];
         document.getElementById('nav_match_history').textContent = translations[lang]["nav_match_history"];
         document.getElementById('nav_score_board').textContent = translations[lang]["nav_score_board"];
+        document.getElementById('nav_patch_notes').textContent = translations[lang]["nav_patch_notes"];
 
         document.querySelectorAll(".next-day").forEach(el => {
             el.textContent = translations[lang]["next_day"];
