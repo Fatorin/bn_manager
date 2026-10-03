@@ -6,7 +6,7 @@ BN_MANAGER 是一個專為 [PVPGN](https://github.com/pvpgn/pvpgn-server) 設計
 
 ## 功能概述
 
-- **房間監控**：即時觀看 PvPGN 上正在運行的房間數量及狀態
+- **房間監控**：即時觀看正在運行的房間 — [ghostpp-rs](https://github.com/Fatorin/ghostpp-rs) 機器人的房間直接讀取各機器人的 `/status` 端點（`bot_status_urls`，含玩家名單與遊戲階段），其餘 PvPGN 房間另外列出並排除機器人房間
 - **地圖管理**：特定玩家可通過隱藏頁面上傳自定義地圖
 - **帳號整合**：
     - 通過 Discord 註冊並綁定 PvPGN 帳號

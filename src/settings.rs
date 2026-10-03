@@ -7,7 +7,12 @@ use std::path::Path;
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub user_data_path: String,
+    /// PVPGN status file; blank disables the PVPGN room list.
+    #[serde(default)]
     pub bn_log_path: String,
+    /// ghostpp-rs `GET /status` endpoints, e.g. `http://127.0.0.1:6200/status`.
+    #[serde(default)]
+    pub bot_status_urls: Vec<String>,
     pub valid_code: String,
     pub map_path: String,
     pub map_valid_code: String,
@@ -69,8 +74,8 @@ fn validate_config(config: &Config) -> bool {
         error!("USER_DATA_PATH is empty");
         return false;
     }
-    if config.bn_log_path.is_empty() {
-        error!("BN_LOG_PATH is empty");
+    if let Some(url) = config.bot_status_urls.iter().find(|url| !url.starts_with("http://") && !url.starts_with("https://")) {
+        error!("BOT_STATUS_URLS entry is not an http(s) URL: {}", url);
         return false;
     }
     if config.valid_code.is_empty() {

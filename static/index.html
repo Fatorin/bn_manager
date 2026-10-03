@@ -143,6 +143,46 @@
             position: absolute;
             left: 0;
         }
+
+        .room-section + .room-section {
+            margin-top: 1rem;
+        }
+
+        .section-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.25rem 0.5rem;
+            border-left: 3px solid #0d6efd;
+            margin-bottom: 0.25rem;
+        }
+
+        .section-title .fas {
+            color: #6c757d;
+            margin-right: 0.25rem;
+        }
+
+        .bot-row th {
+            background-color: #f8f9fa;
+            font-size: 0.85rem;
+        }
+
+        .bot-row.offline th {
+            color: #6c757d;
+        }
+
+        .game-players {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .game-players .reconnecting {
+            color: #fd7e14;
+        }
+
+        .empty-row td {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 
@@ -192,17 +232,44 @@
 
         <div class="tab-content">
             <div class="tab-pane fade show active" id="rooms" role="tabpanel" aria-labelledby="rooms-tab">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th scope="col" width="10%">#</th>
-                                <th id="room_name" scope="col" width="65%">Room Name</th>
-                                <th id="player_count" scope="col" width="25%">Player Count</th>
-                            </tr>
-                        </thead>
-                        <tbody id="roomTbody"></tbody>
-                    </table>
+                <div id="botSection" class="room-section" style="display: none;">
+                    <div class="section-title">
+                        <i class="fas fa-robot"></i>
+                        <span id="bot_section_title">Bot Games</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th id="bot_th_game" scope="col">Room Name</th>
+                                    <th id="bot_th_map" scope="col" class="d-none d-md-table-cell">Map</th>
+                                    <th id="bot_th_status" scope="col">Status</th>
+                                    <th id="bot_th_players" scope="col" class="text-end">Players</th>
+                                </tr>
+                            </thead>
+                            <tbody id="botTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="pvpgnSection" class="room-section" style="display: none;">
+                    <div class="section-title">
+                        <i class="fas fa-server"></i>
+                        <span id="pvpgn_section_title">Other PVPGN Games</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col" width="10%">#</th>
+                                    <th id="room_name" scope="col" width="65%">Room Name</th>
+                                    <th id="player_count" scope="col" width="25%" class="text-end">Player Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roomTbody"></tbody>
+                        </table>
+                    </div>
+                    <div id="pvpgnError" class="alert alert-warning py-1 mt-2 mb-0" role="alert" style="display: none;"></div>
                 </div>
                 <div id="errorSpan" class="alert alert-primary py-1 mt-2" role="alert" style="display: none;"></div>
             </div>
@@ -341,7 +408,20 @@
             "times_tab": "Schedule",
             "nav_match_history": "Match History",
             "nav_score_board": "Score Board",
-            "nav_patch_notes": "Patch Notes"
+            "nav_patch_notes": "Patch Notes",
+            "bot_section_title": "Bot Games",
+            "pvpgn_section_title": "Other PVPGN Games",
+            "bot_th_map": "Map",
+            "bot_th_status": "Status",
+            "online": "Online",
+            "offline": "Offline",
+            "phase_lobby": "Lobby",
+            "phase_loading": "Loading",
+            "phase_playing": "Playing",
+            "open_slots": "{n} open",
+            "no_games": "No games right now",
+            "pvpgn_error": "Unable to read PVPGN status",
+            "reconnecting": "Reconnecting"
         },
         "zh-TW": {
             "title": "Fate Another 房間狀態",
@@ -383,7 +463,20 @@
             "times_tab": "時刻表",
             "nav_match_history": "對戰紀錄",
             "nav_score_board": "排行榜",
-            "nav_patch_notes": "版本更新"
+            "nav_patch_notes": "版本更新",
+            "bot_section_title": "機器人房間",
+            "pvpgn_section_title": "其他 PVPGN 房間",
+            "bot_th_map": "地圖",
+            "bot_th_status": "狀態",
+            "online": "在線",
+            "offline": "離線",
+            "phase_lobby": "等待中",
+            "phase_loading": "載入中",
+            "phase_playing": "遊戲中",
+            "open_slots": "空位 {n}",
+            "no_games": "目前沒有房間",
+            "pvpgn_error": "無法讀取 PVPGN 狀態",
+            "reconnecting": "重新連線中"
         },
         "zh-CN": {
             "title": "Fate Another 房间状态",
@@ -425,7 +518,20 @@
             "times_tab": "时间表",
             "nav_match_history": "对战记录",
             "nav_score_board": "排行榜",
-            "nav_patch_notes": "版本更新"
+            "nav_patch_notes": "版本更新",
+            "bot_section_title": "机器人房间",
+            "pvpgn_section_title": "其他 PVPGN 房间",
+            "bot_th_map": "地图",
+            "bot_th_status": "状态",
+            "online": "在线",
+            "offline": "离线",
+            "phase_lobby": "等待中",
+            "phase_loading": "载入中",
+            "phase_playing": "游戏中",
+            "open_slots": "空位 {n}",
+            "no_games": "目前没有房间",
+            "pvpgn_error": "无法读取 PVPGN 状态",
+            "reconnecting": "重新连线中"
         },
         "ko": {
             "title": "Fate Another 방 상태",
@@ -467,7 +573,20 @@
             "times_tab": "시간표",
             "nav_match_history": "경기 기록",
             "nav_score_board": "점수판",
-            "nav_patch_notes": "패치 노트"
+            "nav_patch_notes": "패치 노트",
+            "bot_section_title": "봇 게임",
+            "pvpgn_section_title": "기타 PVPGN 게임",
+            "bot_th_map": "맵",
+            "bot_th_status": "상태",
+            "online": "온라인",
+            "offline": "오프라인",
+            "phase_lobby": "대기실",
+            "phase_loading": "로딩 중",
+            "phase_playing": "게임 중",
+            "open_slots": "빈자리 {n}",
+            "no_games": "현재 게임이 없습니다",
+            "pvpgn_error": "PVPGN 상태를 불러올 수 없습니다",
+            "reconnecting": "재접속 중"
         }
     };
 
@@ -486,6 +605,13 @@
         document.getElementById('nav_match_history').textContent = translations[lang]["nav_match_history"];
         document.getElementById('nav_score_board').textContent = translations[lang]["nav_score_board"];
         document.getElementById('nav_patch_notes').textContent = translations[lang]["nav_patch_notes"];
+        document.getElementById('bot_section_title').textContent = translations[lang]["bot_section_title"];
+        document.getElementById('pvpgn_section_title').textContent = translations[lang]["pvpgn_section_title"];
+        document.getElementById('bot_th_game').textContent = translations[lang]["room_name"];
+        document.getElementById('bot_th_map').textContent = translations[lang]["bot_th_map"];
+        document.getElementById('bot_th_status').textContent = translations[lang]["bot_th_status"];
+        document.getElementById('bot_th_players').textContent = translations[lang]["player_count"];
+        document.getElementById('pvpgnError').textContent = translations[lang]["pvpgn_error"];
 
         document.querySelectorAll(".next-day").forEach(el => {
             el.textContent = translations[lang]["next_day"];
@@ -517,6 +643,11 @@
         document.getElementById('other_rule_3').textContent = translations[lang]["other_rule_3"];
         document.getElementById('conclusion').textContent = translations[lang]["conclusion"];
         document.getElementById('report_instruction').textContent = translations[lang]["report_instruction"];
+
+        currentLang = lang;
+        if (lastRoomStatus) {
+            showSuccess(lastRoomStatus);
+        }
     }
 
     document.getElementById('languageSelect').addEventListener('change', function () {
@@ -539,6 +670,13 @@
 
     var errorSpan = document.getElementById('errorSpan');
     var roomTbody = document.getElementById('roomTbody');
+    var botTbody = document.getElementById('botTbody');
+    var currentLang = 'en';
+    var lastRoomStatus = null;
+
+    function t(key) {
+        return translations[currentLang][key];
+    }
 
     function refreshRoomInfo() {
         fetch("room_info", {
@@ -547,8 +685,14 @@
                 "Content-Type": "application/json"
             }
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(response.status + " " + response.statusText);
+                }
+                return response.json();
+            })
             .then(data => {
+                lastRoomStatus = data;
                 showSuccess(data);
             })
             .catch(error => {
@@ -564,9 +708,140 @@
 
     function showSuccess(json) {
         errorSpan.style.display = 'none';
+        renderBots(json.bots, json.server_time);
+        renderPvpgn(json.pvpgn, json.pvpgn_error);
+    }
+
+    function el(tag, className, text) {
+        var node = document.createElement(tag);
+        if (className) {
+            node.className = className;
+        }
+        if (text !== undefined) {
+            node.textContent = text;
+        }
+        return node;
+    }
+
+    function formatElapsed(seconds) {
+        seconds = Math.max(0, seconds);
+        var h = Math.floor(seconds / 3600);
+        var m = Math.floor((seconds % 3600) / 60);
+        var s = seconds % 60;
+        var mm = String(m).padStart(2, '0');
+        var ss = String(s).padStart(2, '0');
+        return h > 0 ? h + ':' + mm + ':' + ss : m + ':' + ss;
+    }
+
+    function emptyRow(colSpan) {
+        var row = el('tr', 'empty-row');
+        var cell = el('td', 'text-center', t('no_games'));
+        cell.colSpan = colSpan;
+        row.appendChild(cell);
+        return row;
+    }
+
+    function phaseBadge(game, serverTime) {
+        switch (game.phase) {
+            case 'lobby':
+                return el('span', 'badge bg-success', t('phase_lobby'));
+            case 'loading':
+                return el('span', 'badge bg-warning text-dark', t('phase_loading'));
+            default:
+                var text = t('phase_playing');
+                if (game.started_at) {
+                    text += ' ' + formatElapsed(serverTime - game.started_at);
+                }
+                return el('span', 'badge bg-secondary', text);
+        }
+    }
+
+    function renderBots(bots, serverTime) {
+        var section = document.getElementById('botSection');
+        if (!bots) {
+            section.style.display = 'none';
+            return;
+        }
+        section.style.display = 'block';
+        botTbody.innerHTML = '';
+
+        if (bots.length === 0) {
+            botTbody.appendChild(emptyRow(4));
+            return;
+        }
+
+        bots.forEach(function (bot) {
+            var header = el('tr', 'bot-row' + (bot.online ? '' : ' offline'));
+            var headerCell = el('th');
+            headerCell.colSpan = 4;
+            headerCell.appendChild(el('i', 'fas fa-robot me-1'));
+            headerCell.appendChild(document.createTextNode(bot.bot + ' '));
+            headerCell.appendChild(el('span', 'badge ' + (bot.online ? 'bg-success' : 'bg-secondary'),
+                bot.online ? t('online') : t('offline')));
+            header.appendChild(headerCell);
+            botTbody.appendChild(header);
+
+            if (bot.online && bot.games.length === 0) {
+                botTbody.appendChild(emptyRow(4));
+            }
+
+            bot.games.forEach(function (game) {
+                var row = el('tr');
+
+                var nameCell = el('td');
+                nameCell.appendChild(el('div', '', game.name));
+                if (game.players.length > 0) {
+                    var playerLine = el('div', 'game-players');
+                    game.players.forEach(function (player, index) {
+                        if (index > 0) {
+                            playerLine.appendChild(document.createTextNode(', '));
+                        }
+                        var span = el('span', player.reconnecting ? 'reconnecting' : '',
+                            player.name + (player.observer ? ' (OB)' : ''));
+                        if (player.reconnecting) {
+                            span.title = t('reconnecting');
+                        }
+                        playerLine.appendChild(span);
+                    });
+                    nameCell.appendChild(playerLine);
+                }
+
+                var mapCell = el('td', 'd-none d-md-table-cell small text-muted', game.map);
+
+                var statusCell = el('td');
+                statusCell.appendChild(phaseBadge(game, serverTime));
+
+                var playerCount = game.players.filter(function (p) { return !p.observer; }).length;
+                var countCell = el('td', 'text-end', String(playerCount));
+                if (game.phase === 'lobby' && game.open_slots > 0) {
+                    countCell.appendChild(el('div', 'game-players', t('open_slots').replace('{n}', game.open_slots)));
+                }
+
+                row.appendChild(nameCell);
+                row.appendChild(mapCell);
+                row.appendChild(statusCell);
+                row.appendChild(countCell);
+                botTbody.appendChild(row);
+            });
+        });
+    }
+
+    function renderPvpgn(rooms, hasError) {
+        var section = document.getElementById('pvpgnSection');
+        if (!rooms) {
+            section.style.display = 'none';
+            return;
+        }
+        section.style.display = 'block';
+        document.getElementById('pvpgnError').style.display = hasError ? 'block' : 'none';
         roomTbody.innerHTML = '';
 
-        json.forEach(function (value) {
+        if (rooms.length === 0 && !hasError) {
+            roomTbody.appendChild(emptyRow(3));
+            return;
+        }
+
+        rooms.forEach(function (value) {
             var row = document.createElement('tr');
 
             var cell1 = document.createElement('th');
@@ -576,8 +851,7 @@
             var cell2 = document.createElement('td');
             cell2.textContent = value["room_name"];
 
-            var cell3 = document.createElement('td');
-            cell3.textContent = value["player_count"];
+            var cell3 = el('td', 'text-end', value["player_count"]);
 
             row.appendChild(cell1);
             row.appendChild(cell2);

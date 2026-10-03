@@ -1,6 +1,11 @@
 # Please replace the following settings, and note that it is recommended to use absolute paths in LINUX to avoid exceptions.
 user_data_path = "./app/users"
+# PVPGN status file. Leave blank to hide the PVPGN room list.
 bn_log_path = "./app/server.dat"
+# ghostpp-rs status endpoints (the bot's `status_bind` + /status). Games listed here
+# are shown under their bot and removed from the PVPGN list. Leave empty to disable.
+bot_status_urls = []
+# bot_status_urls = ["http://127.0.0.1:6201/status", "http://127.0.0.1:6202/status"]
 valid_code = "YOUR_VALID_CODE"
 map_path = "./app/maps"
 map_valid_code = "YOUR_MAP_VALID_CODE"

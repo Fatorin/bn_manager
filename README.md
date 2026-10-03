@@ -6,7 +6,7 @@ BN_MANAGER is a management tool designed for [PVPGN](https://github.com/pvpgn/pv
 
 ## Features Overview
 
-- **Room Monitoring**: Real-time view of active rooms on Battle.net
+- **Room Monitoring**: Real-time view of active rooms — games hosted by [ghostpp-rs](https://github.com/Fatorin/ghostpp-rs) bots are read straight from each bot's `/status` endpoint (`bot_status_urls`, with players and game phase), and the remaining PVPGN rooms are listed separately without the bot games
 - **Map Management**: Specific players can upload custom maps through a hidden page
 - **Account Integration**:
     - Register and link Battle.net accounts via Discord

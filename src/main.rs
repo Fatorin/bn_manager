@@ -33,6 +33,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         info!("MMR feature disabled, skipping MySQL connection and MMR worker");
     }
 
+    if settings::CONFIG.bot_status_urls.is_empty() {
+        info!("No bot status URLs configured, skipping bot status worker");
+    } else {
+        info!("Starting bot status worker...");
+        worker::bot_status::start_bot_status_worker(&shutdown_tx);
+    }
+
     let mut bot_shutdown_rx = shutdown_tx.subscribe();
 
     info!("Starting Discord bot...");
