@@ -1,0 +1,3 @@
+# sqlx checksums the raw bytes of each migration; keep them LF on every
+# checkout so local and CI builds embed identical files.
+*.sql text eol=lf
