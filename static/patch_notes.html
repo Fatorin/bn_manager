@@ -330,14 +330,19 @@
         }
 
         document.getElementById('languageSelect').addEventListener('change', function () {
+            try { localStorage.setItem('lang', this.value); } catch (e) { }
             setLanguage(this.value);
         });
 
         document.addEventListener("DOMContentLoaded", function () {
             const userLang = navigator.language || navigator.userLanguage;
-            const lang = (userLang.startsWith('zh-TW') || userLang === 'zh-TW') ? 'zh-TW' :
+            let lang = (userLang.startsWith('zh-TW') || userLang === 'zh-TW') ? 'zh-TW' :
                 (userLang.startsWith('zh-CN') || userLang === 'zh-CN') ? 'zh-CN' :
                     (userLang.startsWith('ko') || userLang === 'ko') ? 'ko' : 'en';
+            try {
+                const saved = localStorage.getItem('lang');
+                if (saved && UI[saved]) lang = saved;
+            } catch (e) { }
             fetch(NOTES_DIR + 'versions.json').then(function (res) {
                 return res.json();
             }).then(function (list) {
