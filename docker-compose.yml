@@ -13,7 +13,7 @@ services:
             - bn_network
     BNManager:
         container_name: BNManager
-        image: fatorin/bn_manager:0.3.9
+        image: fatorin/bn_manager:0.3.10
         restart: always
         ports:
             - "3000:3000"
@@ -23,6 +23,7 @@ services:
             - ./bots/maps:/app/maps
             - ./var/pvpgn/status/server.dat:/app/server.dat
             - ./static/index.html:/app/static/index.html
+            - ./static/patch_notes:/app/static/patch_notes
             - ./db:/app/db
             # use it if you want to add other locale file
             # - ./i18n:/app/i18n
