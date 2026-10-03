@@ -10,9 +10,15 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
     <style>
+        html {
+            scrollbar-gutter: stable;
+        }
+
         .site-nav {
+            margin: 0.5rem 0 1rem;
+            border-radius: 0.5rem;
+            background-color: var(--bs-tertiary-bg);
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1rem;
         }
 
         .site-nav .navbar-brand {
@@ -47,11 +53,13 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg bg-body-tertiary site-nav">
-    <div class="container">
-        <a class="navbar-brand" href="/map.html">鳥圖達人</a>
-    </div>
-</nav>
+<div class="container">
+    <nav class="navbar navbar-expand-lg site-nav">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/map.html">鳥圖達人</a>
+        </div>
+    </nav>
+</div>
 
 <div class="container">
     <div class="row pt-2">

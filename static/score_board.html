@@ -12,9 +12,15 @@
     crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
+    html {
+      scrollbar-gutter: stable;
+    }
+
     .site-nav {
+      margin: 0.5rem 0 1rem;
+      border-radius: 0.5rem;
+      background-color: var(--bs-tertiary-bg);
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      margin-bottom: 1rem;
     }
 
     .site-nav .navbar-brand {
@@ -40,40 +46,42 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg bg-body-tertiary site-nav">
-    <div class="container">
-      <a class="navbar-brand" href="/">Fate Another</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav"
-        aria-controls="siteNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="siteNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/" id="nav_room_status">Room Status</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/match_history.html" id="nav_match_history">Match History</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/score_board.html" id="nav_score_board">Score Board</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/patch_notes.html" id="nav_patch_notes">Patch Notes</a>
-          </li>
-        </ul>
-        <div class="language-select py-2 py-lg-0">
-          <i class="fas fa-globe"></i>
-          <select id="languageSelect" class="form-select form-select-sm" aria-label="Language">
-            <option value="en">English</option>
-            <option value="zh-TW">繁體中文</option>
-            <option value="zh-CN">简体中文</option>
-            <option value="ko">한국어</option>
-          </select>
+  <div class="container">
+    <nav class="navbar navbar-expand-lg site-nav">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">Fate Another</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav"
+          aria-controls="siteNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="siteNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/" id="nav_room_status">Room Status</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/match_history.html" id="nav_match_history">Match History</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/score_board.html" id="nav_score_board">Score Board</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/patch_notes.html" id="nav_patch_notes">Patch Notes</a>
+            </li>
+          </ul>
+          <div class="language-select py-2 py-lg-0">
+            <i class="fas fa-globe"></i>
+            <select id="languageSelect" class="form-select form-select-sm" aria-label="Language">
+              <option value="en">English</option>
+              <option value="zh-TW">繁體中文</option>
+              <option value="zh-CN">简体中文</option>
+              <option value="ko">한국어</option>
+            </select>
+          </div>
         </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </div>
 
   <div class="container">
     <!-- Filter and Controls -->
